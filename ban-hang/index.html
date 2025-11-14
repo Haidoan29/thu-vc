@@ -1,0 +1,1288 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Hover Bootstrap 5</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: "Mulish", sans-serif;
+            font-size: 1.2rem;
+            line-height: 1.5;
+        }
+
+        header {
+            background: #fff;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, .1);
+            z-index: 50;
+        }
+
+        .logo img {
+            max-height: 60px;
+        }
+
+        /* Dropdown hover */
+        .nav-item.dropdown:hover>.dropdown-menu {
+            display: block;
+        }
+
+        /* Submenu */
+        .dropdown-submenu .submenu {
+            display: none;
+            position: absolute;
+            left: 100%;
+            top: 0;
+        }
+
+        .dropdown-submenu:hover .submenu {
+            display: block;
+        }
+
+        /* Mobile menu */
+        .mobile-menu {
+            width: 260px;
+            height: 100vh;
+            background: #fff;
+            position: fixed;
+            top: 0;
+            left: -260px;
+            overflow-y: auto;
+            transition: 0.3s;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, .1);
+            z-index: 2000;
+        }
+
+        .mobile-menu.open {
+            left: 0;
+        }
+
+        .menu-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 1500;
+        }
+
+        .menu-backdrop.show {
+            display: block;
+        }
+
+        .hero {
+            position: relative;
+            min-height: 70vh;
+            width: 100%;
+            background-image: url("https://thoitrang08.themeweb4s.com/templates/noithat06/assets/media/slider/slide_image_1.webp");
+            /* ← đặt ảnh nền full section */
+            background-size: cover;
+            background-position: center right;
+            background-repeat: no-repeat;
+            display: flex;
+            align-items: center;
+        }
+
+        .hero-overlay {
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.4);
+            /* hơi sáng giống mẫu */
+            display: flex;
+            align-items: center;
+        }
+
+        .hero-content {
+            max-width: 600px;
+            padding: 0 120px;
+        }
+
+        .title {
+            font-size: 48px;
+            font-weight: 700;
+            color: #595d34;
+            line-height: 1.2;
+        }
+
+        .desc {
+            margin: 25px 0 35px;
+            font-size: 18px;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 35px;
+            font-size: 17px;
+            border: 1.5px solid #bdaa75;
+            color: #444;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background: #bdaa75;
+            color: #fff;
+        }
+
+        .collection-section {
+            text-align: center;
+            padding: 60px 0;
+            font-family: "Segoe UI", sans-serif;
+        }
+
+        .section-title {
+            font-size: 32px;
+            color: #575c31;
+            margin: 0;
+        }
+
+        .section-sub {
+            margin-top: 10px;
+            color: #555;
+            font-size: 16px;
+        }
+
+        .collection-grid {
+            margin-top: 40px;
+            width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        .collection-card {
+            background: #fff;
+            border: 1px solid #eee;
+        }
+
+        .collection-card img {
+            width: 100%;
+            display: block;
+        }
+
+        .card-content {
+            text-align: left;
+            padding: 25px 25px 35px;
+        }
+
+        .card-content h3 {
+            margin: 0 0 10px;
+            font-size: 20px;
+            line-height: 1.4;
+            color: #575c31;
+        }
+
+        .card-content p {
+            font-size: 15px;
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 25px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 30px;
+            background: #eee7d8;
+            color: #6a6a6a;
+            text-decoration: none;
+            border-radius: 3px;
+            font-size: 15px;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background: #d9c9a9;
+            color: #fff;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .collection-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .product-section {
+            text-align: center;
+            padding: 60px 0;
+            background: #f7f4eb;
+            /* giống hình mẫu */
+            font-family: "Segoe UI", sans-serif;
+        }
+
+        .product-title {
+            font-size: 30px;
+            color: #5b6335;
+            margin-bottom: 5px;
+        }
+
+        .product-sub {
+            color: #555;
+            margin-bottom: 40px;
+        }
+
+        .product-slider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            position: relative;
+        }
+
+        .product-list {
+            display: flex;
+            gap: 60px;
+        }
+
+        .product-item {
+            text-align: center;
+        }
+
+        .circle {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 2px solid #d8c08f;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fff;
+        }
+
+        .circle img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .name {
+            margin-top: 15px;
+            font-size: 14px;
+            letter-spacing: 2px;
+            color: #5b5b5b;
+        }
+
+        .arrow {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: #fff;
+            border: 1px solid #dcdcdc;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+        }
+
+        .arrow:hover {
+            background: #e9e9e9;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .product-list {
+                gap: 25px;
+                overflow-x: scroll;
+            }
+
+            .arrow {
+                display: none;
+            }
+        }
+
+        /* Section */
+        .hottrend {
+            text-align: center;
+            padding: 60px 0;
+            width: 100%;
+        }
+
+        .hottrend-title {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #4d4d4d;
+        }
+
+        .hottrend-sub {
+            color: #666;
+            margin-bottom: 40px;
+        }
+
+        /* Product list layout */
+        .hottrend-list {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+        }
+
+        .hottrend-item {
+            width: 260px;
+        }
+
+        /* Image box */
+        .img-box {
+            width: 100%;
+            height: 260px;
+            background: #f7f7f7;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .img-box img {
+            width: 260px !important;
+            height: 260px !important;
+            object-fit: contain;
+        }
+
+        /* Sale badge */
+        .sale {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: #bfa77a;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        /* Text */
+        .name {
+            margin-top: 15px;
+            font-size: 16px;
+            color: #444;
+        }
+
+        .price {
+            margin-top: 5px;
+        }
+
+        .price .new {
+            font-weight: 600;
+            color: #2a2a2a;
+        }
+
+        .price .old {
+            margin-left: 8px;
+            text-decoration: line-through;
+            color: #999;
+            font-size: 14px;
+        }
+
+        /* Section */
+        .suggest {
+            text-align: center;
+            padding: 60px 0;
+        }
+
+        .suggest-title {
+            font-size: 32px;
+            font-weight: 600;
+            color: #4d5a32;
+            margin-bottom: 10px;
+        }
+
+        .suggest-sub {
+            color: #666;
+            max-width: 950px;
+            margin: 0 auto 40px;
+            line-height: 1.5;
+        }
+
+        /* List layout */
+        .suggest-list {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+        }
+
+        .suggest-item {
+            width: 260px;
+        }
+
+        /* Image box */
+        .img-box {
+            width: 100%;
+            height: 260px;
+            background: #f7f7f7;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sale {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: #bfa77a;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        /* Text info */
+        .name {
+            margin-top: 15px;
+            font-size: 16px;
+            color: #444;
+        }
+
+        .price {
+            margin-top: 5px;
+        }
+
+        .price .new {
+            font-weight: 600;
+            color: #2a2a2a;
+        }
+
+        .price .old {
+            margin-left: 8px;
+            text-decoration: line-through;
+            color: #aaa;
+            font-size: 14px;
+        }
+
+        .price .contact {
+            font-weight: 600;
+            color: #444;
+        }
+
+        .dealhot {
+            background: #5f633b;
+            padding: 60px 0;
+            margin: 0 340px;
+        }
+
+        .dealhot-container {
+            width: 1100px;
+            margin: 0 auto;
+            text-align: center;
+            color: white;
+        }
+
+        .deal-title {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .deal-sub {
+            color: #e6e6e6;
+            margin-bottom: 40px;
+        }
+
+        /* Nội dung */
+        .deal-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        /* Ảnh */
+        .deal-image {
+            width: 420px;
+            height: 420px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 50px;
+        }
+
+        .deal-image img {
+            max-height: 360px;
+            object-fit: contain;
+        }
+
+        /* Info text */
+        .deal-info {
+            width: 420px;
+            text-align: left;
+        }
+
+        .deal-name {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .deal-price {
+            font-size: 22px;
+            color: #d0b36c;
+            margin-bottom: 10px;
+        }
+
+        .deal-price span {
+            font-size: 14px;
+        }
+
+        .deal-line {
+            width: 100%;
+            height: 1px;
+            background: rgba(255, 255, 255, .2);
+            margin: 15px 0;
+        }
+
+        .deal-desc {
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        /* Button add */
+        .deal-add {
+            padding: 12px 28px;
+            background: #c7a25b;
+            border: none;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        /* Nút chuyển slide */
+        .deal-btn {
+            position: absolute;
+            width: 36px;
+            height: 36px;
+            background: white;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #5f633b;
+            font-size: 20px;
+        }
+
+        .deal-btn.left {
+            left: -20px;
+        }
+
+        .deal-btn.right {
+            right: -20px;
+        }
+
+        .news-section {
+            width: 100%;
+            text-align: center;
+            padding: 40px 0;
+        }
+
+        .news-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #4d4d2f;
+        }
+
+        .news-subtitle {
+            color: #777;
+            margin-bottom: 40px;
+        }
+
+        .news-wrapper {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            padding: 20px 40px;
+        }
+
+        .news-item {
+            width: 26%;
+            background: #fff;
+            border-radius: 10px;
+            text-align: left;
+        }
+
+        .news-img {
+            width: 100%;
+            position: relative;
+        }
+
+        .news-img img {
+            width: 100%;
+            border-radius: 10px;
+        }
+
+        .arrow-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            border: none;
+            background: #fff;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .arrow-btn.left {
+            left: 10px;
+        }
+
+        .arrow-btn.right {
+            right: 10px;
+        }
+
+        .news-heading {
+            font-size: 20px;
+            font-weight: 600;
+            margin: 20px 15px 10px;
+        }
+
+        .news-desc {
+            font-size: 15px;
+            line-height: 1.5;
+            color: #666;
+            margin: 0 15px 20px;
+        }
+
+        .news-btn {
+            display: inline-block;
+            margin: 0 15px 20px;
+            padding: 10px 18px;
+            border: 1px solid #c6b192;
+            color: #c6a984;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 15px;
+            transition: 0.2s;
+        }
+
+        .news-btn:hover {
+            background: #c6a984;
+            color: #fff;
+        }
+
+        .footer {
+            background: #5f6540;
+            /* màu nền giống ảnh */
+            padding: 60px 0;
+            color: #fff;
+            font-family: "Roboto", sans-serif;
+        }
+
+        .footer-container {
+            max-width: 1300px;
+            margin: auto;
+            display: flex;
+            justify-content: space-between;
+            gap: 60px;
+        }
+
+        .footer-col {
+            width: 25%;
+        }
+
+        .footer h3 {
+            font-size: 22px;
+            margin-bottom: 25px;
+            font-weight: 700;
+        }
+
+        .footer p,
+        .footer li a {
+            font-size: 15px;
+            line-height: 1.6;
+            color: #f2f2f2;
+        }
+
+        .footer ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer ul li {
+            margin-bottom: 12px;
+        }
+
+        .footer ul li a:hover {
+            color: #d8c08a;
+        }
+
+        /* ICON */
+        .social-icons a {
+            width: 42px;
+            height: 42px;
+            background: #c9a66c;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+            margin-right: 10px;
+            color: #fff;
+            font-size: 18px;
+            transition: 0.3s;
+        }
+
+        .social-icons a:hover {
+            background: #b39057;
+        }
+
+        /* FORM ĐĂNG KÝ */
+        .subscribe-form {
+            margin-top: 15px;
+        }
+
+        .subscribe-form input {
+            width: 100%;
+            padding: 14px;
+            font-size: 15px;
+            border: none;
+            border-radius: 3px;
+            margin-bottom: 15px;
+        }
+
+        .subscribe-form button {
+            width: 100%;
+            padding: 14px;
+            font-size: 16px;
+            background: #c9a66c;
+            color: #fff;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .subscribe-form button:hover {
+            background: #b39057;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="py-2">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+
+                <!-- Logo -->
+                <div class="logo">
+                    <a href="/">
+                        <img src="https://cdn3527.cdn-template-4s.com/media/logo/logo.png" class="img-fluid" alt="logo">
+                    </a>
+                </div>
+
+                <!-- Desktop Menu -->
+                <nav class="d-none d-lg-block">
+                    <ul class="d-flex gap-4 m-0 p-0 list-unstyled">
+
+                        <li><a href="/" class="text-decoration-none text-dark">Trang chủ</a></li>
+                        <li><a href="/ve-chung-toi" class="text-decoration-none text-dark">Giới thiệu</a></li>
+
+                        <!-- Sản phẩm (Dropdown) -->
+                        <li class="nav-item dropdown position-relative">
+                            <a class="nav-link dropdown-toggle" href="/san-pham">Sản phẩm</a>
+
+                            <ul class="dropdown-menu shadow">
+
+                                <li><a class="dropdown-item" href="/vong-tay">Vòng tay</a></li>
+                                <li><a class="dropdown-item" href="/hoa-tai">Hoa tai</a></li>
+                                <li><a class="dropdown-item" href="/day-chuyen">Dây chuyền</a></li>
+
+                                <!-- Submenu -->
+                                <li class="dropdown-submenu position-relative">
+                                    <a class="dropdown-item dropdown-toggle" href="/nhan">Nhẫn</a>
+
+                                    <ul class="dropdown-menu submenu shadow">
+                                        <li><a class="dropdown-item" href="/nhan-cau-hon">Nhẫn cầu hôn</a></li>
+                                        <li><a class="dropdown-item" href="/nhan-cuoi">Nhẫn cưới</a></li>
+                                        <li><a class="dropdown-item" href="/nhan-khac">Nhẫn khác</a></li>
+                                    </ul>
+                                </li>
+
+                                <li><a class="dropdown-item" href="/lac-chan">Lắc chân</a></li>
+                                <li><a class="dropdown-item" href="/kim-cuong">Kim cương</a></li>
+                                <li><a class="dropdown-item" href="/bo-trang-suc">Bộ trang sức</a></li>
+                            </ul>
+                        </li>
+
+                        <li><a href="/gia-vang-hom-nay" class="text-decoration-none text-dark">Giá vàng</a></li>
+                        <li><a href="/tin-tuc" class="text-decoration-none text-dark">Tin tức</a></li>
+                        <li><a href="/lien-he" class="text-decoration-none text-dark">Liên hệ</a></li>
+
+                    </ul>
+                </nav>
+
+                <!-- Icons -->
+                <div class="d-flex align-items-center gap-3">
+                    <i class="fa-solid fa-magnifying-glass icon-btn"></i>
+
+                    <a href="#" class="icon-btn"><i class="fa-regular fa-user"></i></a>
+
+                    <a href="#" class="icon-btn position-relative">
+                        <i class="fa-regular fa-heart"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge bg-danger">0</span>
+                    </a>
+
+                    <a href="#" class="icon-btn position-relative">
+                        <i class="fa-solid fa-bag-shopping"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge bg-danger">0</span>
+                    </a>
+
+                    <!-- Mobile Toggle -->
+                    <i class="fa-solid fa-bars icon-btn d-lg-none" id="btn-open-menu"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="hero-overlay">
+            <div class="hero-content">
+                <h1 class="title">
+                    BỘ SƯU TẬP TRANG SỨC <br>
+                    SANG TRỌNG
+                </h1>
+
+                <p class="desc">
+                    Trang sức Jewelry mang phong cách trẻ trung, hiện đại, liên tục cập nhật những xu
+                    hướng mới từ Hàn Quốc. Ba dòng sản phẩm chủ lực của Jewelry gồm có: Nhẫn cưới,
+                    Trang sức cưới và Trang sức hiện đại cho nữ giới.
+                </p>
+
+                <a href="#" class="btn">Tìm hiểu thêm</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="collection-section">
+        <h2 class="section-title">Bộ sưu tập trang sức</h2>
+        <p class="section-sub">
+            Khám phá bộ sưu tập trang sức mới nhất với thiết kế sang trọng và độc nhất của chúng tôi!
+        </p>
+
+        <div class="collection-grid">
+
+            <!-- Card 1 -->
+            <div class="collection-card">
+                <img src="https://cdn3527.cdn-template-4s.com/media/images/banner-1.webp" alt="">
+                <div class="card-content">
+                    <h3>Bộ sưu tập <br> hoa tai sang trọng</h3>
+                    <p>Thêm chút ngọt ngào cho vẻ ngoài kiêu sa với mẫu bông tai yêu thích.</p>
+                    <a href="#" class="btn">Xem thêm</a>
+                </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="collection-card">
+
+                <div class="card-content">
+                    <h3>Bộ sưu tập <br> vòng tay độc đáo</h3>
+                    <p>Thiết kế cách điệu độc đáo, tạo nên bản giao hưởng tình yêu đầy cảm xúc.</p>
+                    <a href="#" class="btn">Xem thêm</a>
+                </div>
+                <img src="https://cdn3527.cdn-template-4s.com/media/images/banner-1.webp" alt="">
+            </div>
+
+            <!-- Card 3 -->
+            <div class="collection-card">
+                <img src="https://cdn3527.cdn-template-4s.com/media/images/banner-1.webp" alt="">
+                <div class="card-content">
+                    <h3>Bộ sưu tập <br> cài tóc thiết kế</h3>
+                    <p>Khám phá dịch vụ thiết kế riêng miễn phí của Jewelry nhé!</p>
+                    <a href="#" class="btn">Xem thêm</a>
+                </div>
+            </div>
+
+        </div>
+    </section>
+    <section class="product-section">
+        <h2 class="product-title">Sản phẩm</h2>
+        <p class="product-sub">Khám phá dịch vụ thiết kế riêng miễn phí của Jewelry nhé!</p>
+
+        <div class="product-slider">
+
+            <!-- Nút trái -->
+            <button class="arrow left">&#8249;</button>
+
+            <div class="product-list">
+
+                <div class="product-item">
+                    <div class="circle">
+                        <img src="img1.jpg" alt="">
+                    </div>
+                    <p class="name">DÂY CHUYỀN</p>
+                </div>
+
+                <div class="product-item">
+                    <div class="circle">
+                        <img src="img2.jpg" alt="">
+                    </div>
+                    <p class="name">NHẪN</p>
+                </div>
+
+                <div class="product-item">
+                    <div class="circle">
+                        <img src="img3.jpg" alt="">
+                    </div>
+                    <p class="name">LẮC CHÂN</p>
+                </div>
+
+                <div class="product-item">
+                    <div class="circle">
+                        <img src="img4.jpg" alt="">
+                    </div>
+                    <p class="name">KIM CƯƠNG</p>
+                </div>
+
+                <div class="product-item">
+                    <div class="circle">
+                        <img src="img5.jpg" alt="">
+                    </div>
+                    <p class="name">BỘ TRANG SỨC</p>
+                </div>
+
+            </div>
+
+            <!-- Nút phải -->
+            <button class="arrow right">&#8250;</button>
+
+        </div>
+    </section>
+    <section class="hottrend">
+        <h2 class="hottrend-title">Hot trend</h2>
+        <p class="hottrend-sub">Xu hướng trang sức sẽ lên ngôi trong năm 2025. Cùng Jewelry cập nhật xu hướng hot nhất
+        </p>
+
+        <div class="hottrend-list">
+            <!-- Item 1 -->
+            <div class="hottrend-item">
+                <div class="img-box">
+                    <img src="img/product1.png" alt="">
+                    <span class="sale">-7%</span>
+                </div>
+                <h3 class="name">Bộ trang sức kim cương</h3>
+                <div class="price">
+                    <span class="new">6,500,000 VND</span>
+                    <span class="old">7,000,000 VND</span>
+                </div>
+            </div>
+
+            <!-- Item 2 -->
+            <div class="hottrend-item">
+                <div class="img-box">
+                    <img src="img/product2.png" alt="">
+                </div>
+                <h3 class="name">Lắc tay Vàng 24K đá CZ</h3>
+                <div class="price">
+                    <span class="new">2,000,000 VND</span>
+                </div>
+            </div>
+
+            <!-- Item 3 -->
+            <div class="hottrend-item">
+                <div class="img-box">
+                    <img src="img/product3.png" alt="">
+                </div>
+                <h3 class="name">Bông tai kim cương đá CZ</h3>
+                <div class="price">
+                    <span class="new">3,000,000 VND</span>
+                </div>
+            </div>
+
+            <!-- Item 4 -->
+            <div class="hottrend-item">
+                <div class="img-box">
+                    <img src="img/product4.png" alt="">
+                </div>
+                <h3 class="name">Mặt dây Vàng 18K đá CZ</h3>
+                <div class="price">
+                    <span class="new">5,000,000 VND</span>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="suggest">
+        <h2 class="suggest-title">Gợi ý riêng cho bạn</h2>
+        <p class="suggest-sub">
+            Trang sức không chỉ làm bạn đẹp hơn, tôn vinh những đường nét thanh tú của bạn mà còn thể hiện cá tính, gu
+            thời trang riêng của mỗi người
+        </p>
+
+        <div class="suggest-list">
+
+            <!-- Item 1 -->
+            <div class="suggest-item">
+                <div class="img-box">
+                    <img src="img/product1.png" alt="">
+                    <span class="sale">-7%</span>
+                </div>
+                <h3 class="name">Bộ trang sức kim cương</h3>
+                <div class="price">
+                    <span class="new">6,500,000 VND</span>
+                    <span class="old">7,000,000 VND</span>
+                </div>
+            </div>
+
+            <!-- Item 2 -->
+            <div class="suggest-item">
+                <div class="img-box">
+                    <img src="img/product2.png" alt="">
+                </div>
+                <h3 class="name">Lắc tay Vàng 24K đá CZ</h3>
+                <div class="price">
+                    <span class="new">2,000,000 VND</span>
+                </div>
+            </div>
+
+            <!-- Item 3 -->
+            <div class="suggest-item">
+                <div class="img-box">
+                    <img src="img/product3.png" alt="">
+                </div>
+                <h3 class="name">Lắc chân Vàng 24K đá CZ</h3>
+                <div class="price">
+                    <span class="contact">Liên hệ</span>
+                </div>
+            </div>
+
+            <!-- Item 4 -->
+            <div class="suggest-item">
+                <div class="img-box">
+                    <img src="img/product4.png" alt="">
+                </div>
+                <h3 class="name">Lắc chân Vàng 18K đá CZ</h3>
+                <div class="price">
+                    <span class="new">2,000,000 VND</span>
+                </div>
+            </div>
+
+        </div>
+    </section>
+    <section class="dealhot">
+        <div class="dealhot-container">
+
+            <h2 class="deal-title">Deal hot trong ngày</h2>
+            <p class="deal-sub">
+                Trang sức không chỉ làm bạn đẹp hơn, tôn vinh những đường nét thanh tú của bạn mà còn thể hiện cá tính,
+                gu thời trang riêng của mỗi người
+            </p>
+
+            <div class="deal-content">
+
+                <!-- Nút trái -->
+                <button class="deal-btn left"><span>&lt;</span></button>
+
+                <!-- Hình sản phẩm -->
+                <div class="deal-image">
+                    <img src="img/deal-product.png" alt="">
+                </div>
+
+                <!-- Mô tả -->
+                <div class="deal-info">
+                    <h3 class="deal-name">Bộ trang sức kim cương</h3>
+
+                    <div class="deal-price">7,000,000 <span>VND</span></div>
+
+                    <div class="deal-line"></div>
+
+                    <p class="deal-desc">
+                        Thiết kế mặt dây hình cỏ 3, mỗi cánh gắn đá hình trái tim mang ý nghĩa về tình yêu vĩnh cửu và
+                        sự trân trọng<br>
+                        Một dây phù hợp với dây rút 3 phân<br><br>
+                        Sản phẩm vàng 14K gồm 58.5% vàng nguyên chất và các kim loại quý khác, nên sản phẩm có độ cứng
+                        và bền cao
+                    </p>
+
+                    <button class="deal-add">Thêm giỏ hàng</button>
+                </div>
+
+                <!-- Nút phải -->
+                <button class="deal-btn right"><span>&gt;</span></button>
+
+            </div>
+        </div>
+    </section>
+    <section class="news-section">
+        <h2 class="news-title">Tin mới nhất</h2>
+        <p class="news-subtitle">
+            Thêm chút ngọt ngào cho vẻ ngoài kiêu sa với mẫu bông tai yêu thích.
+        </p>
+
+        <div class="news-wrapper">
+
+            <!-- ITEM 1 -->
+            <div class="news-item">
+                <div class="news-img">
+                    <img src="https://cdn3527.cdn-template-4s.com/thumbs/news/blog-7_thumb_720.jpg" alt="">
+                    <button class="arrow-btn left">&#10094;</button>
+                </div>
+
+                <h3 class="news-heading">
+                    Tô điểm cho bản thân với bộ trang sức tuyệt đẹp
+                </h3>
+                <p class="news-desc">
+                    Thời trang vốn dĩ không chỉ là váy áo, mà còn là sự khéo léo kết hợp
+                    của những món phụ kiện khẳng định phong cách của [...]
+                </p>
+                <a href="#" class="news-btn">Xem thêm</a>
+            </div>
+
+            <!-- ITEM 2 -->
+            <div class="news-item">
+                <div class="news-img">
+                    <img src="https://cdn3527.cdn-template-4s.com/thumbs/news/blog-7_thumb_720.jpg" alt="">
+                </div>
+
+                <h3 class="news-heading">
+                    Đeo những chiếc nhẫn, vòng cổ và hoa tai hợp thời trang giúp chúng tôi trông thật tuyệt vời
+                </h3>
+                <p class="news-desc">
+                    Thời trang vốn dĩ không chỉ là váy áo, mà còn là sự khéo léo kết hợp
+                    của những món phụ kiện khẳng định phong cách của [...]
+                </p>
+                <a href="#" class="news-btn">Xem thêm</a>
+            </div>
+
+            <!-- ITEM 3 -->
+            <div class="news-item">
+                <div class="news-img">
+                    <img src="https://cdn3527.cdn-template-4s.com/thumbs/news/blog-7_thumb_720.jpg" alt="">
+                    <button class="arrow-btn right">&#10095;</button>
+                </div>
+
+                <h3 class="news-heading">
+                    Những khoảnh khắc lấp lánh của vòng tay kim cương
+                </h3>
+                <p class="news-desc">
+                    Thời trang vốn dĩ không chỉ là váy áo, mà còn là sự khéo léo kết hợp
+                    của những món phụ kiện khẳng định phong cách của [...]
+                </p>
+                <a href="#" class="news-btn">Xem thêm</a>
+            </div>
+
+        </div>
+    </section>
+    <footer class="footer">
+        <div class="footer-container">
+
+            <!-- Cột 1 - Thông tin liên hệ -->
+            <div class="footer-col">
+                <h3>Thông tin liên hệ</h3>
+                <p><strong>CÔNG TY TNHH PHẦN MỀM NHÂN HÒA</strong></p>
+
+                <p>Địa chỉ: Tầng 4, Tòa nhà số 97 - 99 Láng Hạ, Đống Đa, Hà Nội (Tòa nhà Petrowaco)</p>
+                <p>Điện thoại: 1900 6680 - 0901191616</p>
+                <p>Email: contact@sm4s.vn</p>
+
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-google-plus-g"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+
+            <!-- Cột 2 - Liên kết -->
+            <div class="footer-col">
+                <h3>Liên kết</h3>
+                <ul>
+                    <li><a href="#">Trang chủ</a></li>
+                    <li><a href="#">Giới thiệu</a></li>
+                    <li><a href="#">Sản phẩm</a></li>
+                    <li><a href="#">Tin tức</a></li>
+                    <li><a href="#">Thư viện</a></li>
+                    <li><a href="#">Liên hệ</a></li>
+                </ul>
+            </div>
+
+            <!-- Cột 3 - Chính sách -->
+            <div class="footer-col">
+                <h3>Chính sách</h3>
+                <ul>
+                    <li><a href="#">Hướng dẫn mua hàng</a></li>
+                    <li><a href="#">Hướng dẫn đổi trả hàng</a></li>
+                    <li><a href="#">Hướng dẫn thanh toán</a></li>
+                    <li><a href="#">Chính sách giao hàng</a></li>
+                    <li><a href="#">Chính sách bảo mật</a></li>
+                    <li><a href="#">Chính sách khuyến mại</a></li>
+                </ul>
+            </div>
+
+            <!-- Cột 4 - Đăng ký nhận tin -->
+            <div class="footer-col">
+                <h3>Đăng ký ngay</h3>
+                <p>Đăng ký để nhận những sản phẩm và tin tức mới nhất cập nhật hàng ngày nhanh nhất.</p>
+
+                <form class="subscribe-form">
+                    <input type="email" placeholder="Email của bạn">
+                    <button type="submit">Đăng ký</button>
+                </form>
+            </div>
+
+        </div>
+    </footer>
+
+
+    <!-- Mobile Sidebar -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
+            <strong>Menu</strong>
+            <i class="fa-solid fa-xmark icon-btn" id="btn-close-menu"></i>
+        </div>
+
+        <ul class="p-3 list-unstyled">
+            <li><a href="/">Trang chủ</a></li>
+            <li><a href="/ve-chung-toi">Giới thiệu</a></li>
+            <li><a href="/san-pham">Sản phẩm</a></li>
+            <li><a href="/gia-vang-hom-nay">Giá vàng</a></li>
+            <li><a href="/tin-tuc">Tin tức</a></li>
+            <li><a href="/lien-he">Liên hệ</a></li>
+        </ul>
+    </div>
+
+    <div class="menu-backdrop" id="menuBackdrop"></div>
+
+    <script>
+        // Mobile menu script
+        const openBtn = document.getElementById("btn-open-menu");
+        const closeBtn = document.getElementById("btn-close-menu");
+        const mobileMenu = document.getElementById("mobileMenu");
+        const backdrop = document.getElementById("menuBackdrop");
+
+        openBtn.onclick = () => {
+            mobileMenu.classList.add("open");
+            backdrop.classList.add("show");
+        };
+
+        closeBtn.onclick = () => {
+            mobileMenu.classList.remove("open");
+            backdrop.classList.remove("show");
+        };
+
+        backdrop.onclick = () => {
+            mobileMenu.classList.remove("open");
+            backdrop.classList.remove("show");
+        };
+    </script>
+
+</body>
+
+</html>
