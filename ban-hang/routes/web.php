@@ -19,6 +19,8 @@ Route::post('admin/login', [AuthController::class, 'login'])->name('admin.login'
 Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('admin/logout', [AuthController::class, 'logout'])->name('admin.logout');
 require __DIR__ . '/user/product.php';
+require __DIR__ .'/user/cart.php';
+require __DIR__ .'/user/checkout-cart.php';
 Route::prefix('admin')->middleware('admin.auth')->group(function () {
     
 

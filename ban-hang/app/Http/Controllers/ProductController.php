@@ -113,4 +113,11 @@ class ProductController extends Controller
         $product->delete();
         return redirect()->route('admin.products.index')->with('success', 'Product deleted');
     }
+    public function showByCategory($id)
+    {
+        $products = Product::where('category_id', $id)->get(); // giả sử bạn có field category_id
+        $category = Category::find($id);
+
+        return view('user.products.category', compact('products', 'category' ));
+    }
 }

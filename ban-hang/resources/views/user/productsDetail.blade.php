@@ -6,7 +6,6 @@
 <section class="max-w-[1400px] mx-auto px-4 py-10">
 
     <div class="flex gap-12 flex-col lg:flex-row">
-        <!-- Ảnh sản phẩm -->
         <div class="w-full lg:w-1/2 bg-gray-100 p-10 relative">
             <img src="{{ $product->images[0] ?? 'http://via.placeholder.com/400' }}" class="w-full">
 
@@ -15,7 +14,6 @@
             </button>
         </div>
 
-        <!-- Thông tin bên phải -->
         <div class="w-full lg:w-1/2">
             <h2 class="text-3xl font-semibold mb-3">
                 {{ $product->name }}
@@ -40,19 +38,19 @@
                 {{ $product->description }}
             </p>
 
-            <!-- Các hành động khác -->
             <div class="flex items-center gap-4 mb-6">
 
-                <!-- Số lượng -->
                 <div class="flex border rounded">
                     <button id="decrement" class="px-3 py-2 border-r">-</button>
                     <input type="text" id="quantity" value="1" class="w-12 text-center outline-none">
                     <button id="increment" class="px-3 py-2 border-l">+</button>
                 </div>
 
-                <button class="bg-[#6e7145] text-white px-6 py-3 rounded">
+                <button class="bg-[#6e7145] text-white px-6 py-3 rounded" id="btn-add-to-cart"
+                    data-id="{{ $product->id }}">
                     THÊM GIỎ HÀNG
                 </button>
+
 
                 <button class="w-10 h-10 border rounded flex items-center justify-center">
                     <i class="far fa-heart"></i>
@@ -69,7 +67,6 @@
             </div>
         </div>
     </div>
-    <!-- Tabs -->
     <div class="flex gap-4 mt-10 border-t pt-6">
         <button class="px-6 py-3 bg-[#c9a66c] text-white rounded">Thông tin sản phẩm</button>
         <button class="px-6 py-3 bg-gray-200 rounded">Đánh giá</button>
@@ -77,21 +74,41 @@
     </div>
 
 </section>
-
-
 @endsection
+
+@section('scripts')
 <script>
-    const decrementBtn = document.getElementById('decrement');
-    const incrementBtn = document.getElementById('increment');
-    const quantityInput = document.getElementById('quantity');
+    document.addEventListener("DOMContentLoaded", function() {
 
-    decrementBtn.addEventListener('click', function() {
-        let current = parseInt(quantityInput.value) || 1;
-        if (current > 1) quantityInput.value = current - 1;
-    });
+        const addBtn = document.getElementById("btn-add-to-cart");
 
-    incrementBtn.addEventListener('click', function() {
-        let current = parseInt(quantityInput.value) || 1;
-        quantityInput.value = current + 1;
+        addBtn.addEventListener("click", function() {
+
+            let productId = this.getAttribute("data-id");
+            let quantity = document.getElementById("quantity").value;
+
+            fetch("{{ route('cart.add') }}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                    },
+                    body: JSON.stringify({
+                        product_id: productId,
+                        quantity: Number(quantity)
+                    })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById("cart-count").innerText = data.cart_count;
+                    }
+                    if (data.error === "not_logged_in") {
+                        window.location.href = "/admin/login";
+                    }
+                });
+        });
+
     });
 </script>
+@endsection

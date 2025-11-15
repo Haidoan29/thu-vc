@@ -2,53 +2,163 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Cart;
+use App\Models\Product;
+use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
-    public function index() { return response()->json(Cart::all()); }
+    public function add(Request $request)
+    {
+        $userId = session('user_id');
 
-    public function show($id){
-        $cart = Cart::find($id);
-        if (!$cart) return response()->json(['message'=>'Cart not found'],404);
-        return response()->json($cart);
+        if (!$userId) {
+            return response()->json(['error' => 'not_logged_in'], 401);
+        }
+
+        $productId = $request->product_id;
+        $quantity  = $request->quantity;
+
+        // Lấy giỏ hàng theo user
+        $cart = Cart::firstOrCreate(
+            ['user_id' => $userId],
+            ['items' => [], 'total_amount' => 0]
+        );
+
+        $items = $cart->items;
+
+        // Nếu đã có sản phẩm thì tăng số lượng
+        if (isset($items[$productId])) {
+            $items[$productId] += $quantity;
+        } else {
+            $items[$productId] = $quantity;
+        }
+
+        // Cập nhật lại giỏ hàng
+        $cart->items = $items;
+        $cart->save();
+
+        // Tổng số lượng để hiển thị lên header
+        $cartCount = array_sum($items);
+
+        return response()->json([
+            'success' => true,
+            'cart_count' => $cartCount
+        ]);
     }
 
-    public function store(Request $request){
-        $request->validate([
-            'user_id'=>'required|string',
-            'items'=>'nullable|array',
-            'total_amount'=>'nullable|numeric'
-        ]);
+    public function index()
+    {
+        $userId = session('user_id');
+        $cart = Cart::where('user_id', $userId)->first();
 
-        $cart = Cart::create([
-            'user_id'=>$request->user_id,
-            'items'=>$request->items ?? [],
-            'total_amount'=>$request->total_amount ?? 0
-        ]);
+        $items = [];
+        $totalAmount = 0;
 
-        return response()->json($cart,201);
+        if ($cart && !empty($cart->items)) {
+            $cartItems = $cart->items; // đã là array ['product_id' => quantity]
+
+            $productIds = array_keys($cartItems);
+            $products = Product::whereIn('_id', $productIds)->get()->keyBy('_id');
+
+            foreach ($cartItems as $productId => $quantity) {
+                if (isset($products[$productId])) {
+                    $product = $products[$productId];
+                    $subtotal = $product->price * $quantity;
+                    $totalAmount += $subtotal;
+
+                    $items[] = [
+                        'id' => $product->_id,
+                        'name' => $product->name,
+                        'image' => $product->image,
+                        'price' => $product->price,
+                        'quantity' => $quantity,
+                        'subtotal' => $subtotal,
+                    ];
+                }
+            }
+        }
+
+
+        return view('user.cart.index', [
+            'items' => $items,
+            'totalAmount' => $totalAmount,
+        ]);
     }
 
-    public function update(Request $request,$id){
-        $cart = Cart::find($id);
-        if (!$cart) return response()->json(['message'=>'Cart not found'],404);
+    public function getCart()
+    {
+        $userId = session('user_id');
 
-        $cart->update([
-            'user_id'=>$request->user_id ?? $cart->user_id,
-            'items'=>$request->items ?? $cart->items,
-            'total_amount'=>$request->total_amount ?? $cart->total_amount
+        $cart = Cart::where('user_id', $userId)->first();
+
+        return response()->json([
+            'items' => $cart ? $cart->items : []
         ]);
-
-        return response()->json($cart);
     }
+    public function getItems()
+    {
+        $userId = session('user_id');
 
-    public function destroy($id){
-        $cart = Cart::find($id);
-        if (!$cart) return response()->json(['message'=>'Cart not found'],404);
+        if (!$userId) {
+            return response()->json([
+                'items' => [],
+                'total' => 0
+            ]);
+        }
 
-        $cart->delete();
-        return response()->json(['message'=>'Cart deleted']);
+        $cart = \App\Models\Cart::where('user_id', $userId)->first();
+
+        if (!$cart || empty($cart->items)) {
+            return response()->json([
+                'items' => [],
+                'total' => 0
+            ]);
+        }
+
+        $items = $cart->items;
+        $productIds = array_keys($items);
+
+        // Lấy sản phẩm bằng Product model
+        $products = Product::whereIn('_id', $productIds)->get();
+
+        $cartItems = [];
+        $total = 0;
+
+        foreach ($products as $p) {
+            $quantity = $items[$p->_id] ?? 0;
+            $price = $p->price ?? 0;
+
+            $cartItems[] = [
+                'id' => $p->_id,
+                'name' => $p->name,
+                'image' => $p->images[0] ?? 'https://via.placeholder.com/60',
+                'price' => $price,
+                'quantity' => $quantity
+            ];
+
+            $total += $price * $quantity;
+        }
+
+        return response()->json([
+            'items' => $cartItems,
+            'total' => $total
+        ]);
+    }
+    public function updateQuantity(Request $request)
+    {
+        $userId = session('user_id');
+        $productId = $request->input('product_id');
+        $quantity = intval($request->input('quantity', 1));
+
+        $cart = Cart::where('user_id', $userId)->first();
+        if (!$cart) return response()->json(['status' => 'error', 'message' => 'Giỏ hàng trống']);
+
+        $items = $cart->items; // Nếu bạn đang cast items sang array
+        $items[$productId] = $quantity; // Cập nhật số lượng
+        $cart->items = $items;
+        $cart->save();
+
+        return response()->json(['status' => 'success']);
     }
 }

@@ -36,7 +36,7 @@
                 <div class="card-content">
                     <h3>{{ $p->name }}</h3>
                     <p>{{ $p->description }}</p>
-                   <a href="{{ route('products.detail', $p->_id) }}" class="btn">Xem thêm</a>
+                    <a href="{{ route('products.detail', $p->_id) }}" class="btn">Xem thêm</a>
                 </div>
                 @if(!empty($p->images) && count($p->images) > 0)
                 <img src="{{ $p->images[0] }}" alt="{{ $p->name }}">
@@ -48,7 +48,7 @@
                 <div class="card-content">
                     <h3>{{ $p->name }}</h3>
                     <p>{{ $p->description }}</p>
-                 <a href="{{ route('products.detail', $p->_id) }}" class="btn">Xem thêm</a>
+                    <a href="{{ route('products.detail', $p->_id) }}" class="btn">Xem thêm</a>
                 </div>
                 @endif
             </div>
@@ -66,16 +66,14 @@
             <button class="arrow left">&#8249;</button>
 
             <div class="product-list">
-
                 @foreach($categories as $category)
-                <div class="product-item">
+                <a href="{{ route('category.products', $category->_id) }}" class="product-item">
                     <div class="circle">
                         <img src="{{ $category->image }}" alt="{{ $category->name }}">
                     </div>
                     <p class="name">{{ strtoupper($category->name) }}</p>
-                </div>
+                </a>
                 @endforeach
-
             </div>
 
             <!-- Nút phải -->
