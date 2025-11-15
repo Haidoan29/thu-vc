@@ -7,7 +7,10 @@ use App\Models\Order;
 
 class OrderController extends Controller
 {
-    public function index() { return response()->json(Order::all()); }
+    // public function index() { return response()->json(Order::all()); }
+    public function index(){
+        return view("admin/order/index");
+    }
 
     public function show($id){
         $order = Order::find($id);

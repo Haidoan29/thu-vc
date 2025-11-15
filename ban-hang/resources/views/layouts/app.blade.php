@@ -37,7 +37,7 @@
                 </li>
 
                 <li class="mb-4">
-                    <a href="#" class="flex items-center gap-3 text-green-600 font-semibold">
+                    <a href="{{ route('order.index') }}" class="flex items-center gap-3 text-green-600 font-semibold">
                         Đơn hàng
                     </a>
                 </li>

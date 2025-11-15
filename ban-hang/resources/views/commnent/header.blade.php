@@ -93,7 +93,23 @@
             </nav>
 
             <div class="d-flex align-items-center gap-3">
-                <i class="fa-solid fa-magnifying-glass icon-btn"></i>
+                <div class="dropdown">
+                    <a href="#" class="icon-btn dropdown-toggle" id="searchMenu" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa-solid fa-magnifying-glass text-xl cursor-pointer"></i>
+                    </a>
+                    <ul class="dropdown-menu p-3" aria-labelledby="searchMenu" style="min-width: 280px; ;">
+                        <li>
+                            <div class="input-group">
+                                <input type="text" class="form-control rounded-pill border-radius: 50px" placeholder="Tìm kiếm..." id="search-input">
+                                <button class="btn btn-primary rounded-pill ms-2" id="search-btn">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                </button>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+
                 @if(Session::has('user_id'))
                 <div class="dropdown">
                     <a href="#" class="icon-btn dropdown-toggle" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
@@ -214,7 +230,16 @@
         font-weight: bold;
     }
 </style>
-
-
+@endsection
+@section('script')
+<script>
+    document.getElementById('search-btn').addEventListener('click', function() {
+        let query = document.getElementById('search-input').value.trim();
+        if(query !== '') {
+            // Chuyển hướng đến trang tìm kiếm, ví dụ /search?q=...
+            window.location.href = '/search?q=' + encodeURIComponent(query);
+        }
+    });
+</script>
 
 @endsection
