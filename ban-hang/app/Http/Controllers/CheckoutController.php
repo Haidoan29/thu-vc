@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Cart;
 use App\Models\Order;
 use App\Models\Product;
+use Illuminate\Support\Facades\Http;
 
 class CheckoutController extends Controller
 {
@@ -40,10 +41,11 @@ class CheckoutController extends Controller
     // Đặt hàng
     public function placeOrder(Request $request)
     {
+        dd($request->all());
         $request->validate([
             'name' => 'required',
             'phone' => 'required',
-            'address' => 'required'
+            'address' => 'required', // fullAddress
         ]);
 
         $checkoutItems = session('checkout_items', []);
@@ -51,6 +53,12 @@ class CheckoutController extends Controller
 
         $items = collect($checkoutItems)->map(function ($item) {
             $product = Product::find($item['id']);
+
+            if ($product) {
+                $product->stock = max(0, $product->stock - $item['quantity']);
+                $product->save();
+            }
+
             return [
                 'id' => $item['id'],
                 'name' => $product->name ?? 'Sản phẩm',
@@ -63,7 +71,6 @@ class CheckoutController extends Controller
 
         $totalAmount = $items->sum('subtotal');
 
-        // Tạo đơn hàng
         $order = Order::create([
             'user_id' => session('user_id'),
             'items' => $items->toArray(),
@@ -78,24 +85,41 @@ class CheckoutController extends Controller
         $cart = Cart::where('user_id', session('user_id'))->first();
         if ($cart) {
             $orderedIds = collect($checkoutItems)->pluck('id')->toArray();
-
-            // Nếu $cart->items là string thì decode, còn array thì giữ nguyên
             $cartItems = is_string($cart->items) ? json_decode($cart->items, true) : $cart->items;
-
-            // lọc các sản phẩm không được đặt
             $cartItems = array_filter($cartItems, function ($quantity, $productId) use ($orderedIds) {
                 return !in_array($productId, $orderedIds);
             }, ARRAY_FILTER_USE_BOTH);
-
-            // lưu lại
-            $cart->items = $cartItems; // Nếu model cast 'items' => 'array', không cần json_encode nữa
+            $cart->items = $cartItems;
             $cart->save();
         }
-
-
 
         session()->forget('checkout_items');
 
         return redirect('/')->with('success', 'Đặt hàng thành công!');
+    }
+    public function getDistricts($province_code)
+    {
+        try {
+            $response = Http::get("https://provinces.open-api.vn/api/p/{$province_code}?depth=2");
+            return $response->json();
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Không thể lấy districts',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function getWards($district_code)
+    {
+        try {
+            $response = Http::get("https://provinces.open-api.vn/api/d/{$district_code}?depth=2");
+            return $response->json();
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Không thể lấy wards',
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 }

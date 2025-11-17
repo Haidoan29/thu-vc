@@ -56,65 +56,64 @@
         </div>
 
     </section>
-    <section class="product-section">
-        <h2 class="product-title">Sản phẩm</h2>
-        <p class="product-sub">Khám phá dịch vụ thiết kế riêng miễn phí của Jewelry nhé!</p>
+    <section class="product-section my-8">
+        <h2 class="product-title text-3xl font-bold mb-2">Sản phẩm</h2>
+        <p class="product-sub text-gray-600 mb-6">Khám phá dịch vụ thiết kế riêng miễn phí của Jewelry nhé!</p>
 
-        <div class="product-slider">
-
+        <div class="relative flex items-center">
             <!-- Nút trái -->
-            <button class="arrow left">&#8249;</button>
+            <button id="prevBtn" class="arrow left bg-gray-200 p-3 rounded-full shadow hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200">
+                &#8249;
+            </button>
 
-            <div class="product-list">
-                @foreach($categories as $category)
-                <a href="{{ route('category.products', $category->_id) }}" class="product-item">
-                    <div class="circle">
-                        <img src="{{ $category->image }}" alt="{{ $category->name }}">
-                    </div>
-                    <p class="name">{{ strtoupper($category->name) }}</p>
-                </a>
-                @endforeach
+            <!-- Danh sách slider -->
+            <div class="overflow-hidden flex-1 mx-4">
+                <div id="categoryList" class="flex transition-transform duration-300">
+                    @foreach($categories as $category)
+                    <a href="{{ route('category.products', $category->_id) }}" class="product-item flex-shrink-0 w-1/5 text-center p-3 cursor-pointer hover:scale-105 transform transition-all duration-200">
+                        <div class="circle w-24 h-24 mx-auto mb-3 rounded-full overflow-hidden border border-gray-300 shadow-sm">
+                            <img src="{{ $category->image }}" alt="{{ $category->name }}" class="w-full h-full object-cover">
+                        </div>
+                        <p class="name text-sm font-medium text-gray-700">{{ strtoupper($category->name) }}</p>
+                    </a>
+                    @endforeach
+                </div>
             </div>
 
             <!-- Nút phải -->
-            <button class="arrow right">&#8250;</button>
-
+            <button id="nextBtn" class="arrow right bg-gray-200 p-3 rounded-full shadow hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200">
+                &#8250;
+            </button>
         </div>
-
     </section>
     <section class="hottrend">
         <h2 class="hottrend-title">Hot trend</h2>
-        <p class="hottrend-sub">Xu hướng trang sức sẽ lên ngôi trong năm 2025. Cùng Jewelry cập nhật xu hướng hot nhất
-        </p>
+        <p class="hottrend-sub">Xu hướng trang sức sẽ lên ngôi trong năm 2025. Cùng Jewelry cập nhật xu hướng hot nhất</p>
 
         <div class="hottrend-list">
             @foreach($latestProducts as $product)
-            <div class="hottrend-list">
-                @foreach($latestProducts as $product)
-                <div class="hottrend-item">
-                    <div class="img-box">
-                        @if($p->images)
-                        @foreach($p->images as $img)
-                        <img src="{{ $img }}" width="150">
-                        @endforeach
-                        @endif
-
-                    </div>
-                    <h3 class="name">{{ $product->name }}</h3>
-                    <div class="price">
-                        <span class="new">{{ number_format($product->price) }} VND</span>
-                        @if(isset($product->old_price) && $product->old_price > 0)
-                        <span class="old">{{ number_format($product->old_price) }} VND</span>
-                        @endif
-                    </div>
+            <div class="hottrend-item">
+                <div class="img-box">
+                    @if(!empty($product->images))
+                    <img src="{{ $product->images[0] }}" width="150" alt="{{ $product->name }}">
+                    @else
+                    <img src="{{ asset('images/default.png') }}" width="150" alt="No image">
+                    @endif
                 </div>
-                @endforeach
-            </div>
 
+                <h3 class="name">{{ $product->name }}</h3>
+
+                <div class="price">
+                    <span class="new">{{ number_format($product->price) }} VND</span>
+                    @if(isset($product->old_price) && $product->old_price > 0)
+                    <span class="old">{{ number_format($product->old_price) }} VND</span>
+                    @endif
+                </div>
+            </div>
             @endforeach
         </div>
-
     </section>
+
     <section class="suggest">
         <h2 class="suggest-title">Gợi ý riêng cho bạn</h2>
         <p class="suggest-sub">
@@ -135,9 +134,9 @@
             </div>
             @endforeach
         </div>
-
     </section>
-    <section class="dealhot">
+
+    <section class="dealhot mb-5">
         <div class="dealhot-container">
 
             <h2 class="deal-title">Deal hot trong ngày</h2>
@@ -149,11 +148,11 @@
             <div class="deal-content">
 
                 <!-- Nút trái -->
-                <button class="deal-btn left"><span>&lt;</span></button>
+                <!-- <button class="deal-btn left"><span>&lt;</span></button> -->
 
                 <!-- Hình sản phẩm -->
                 <div class="deal-image">
-                    <img src="img/deal-product.png" alt="">
+                    <img src="https://cdn3527.cdn-template-4s.com/thumbs/product/pro-32_thumb_350.webp" alt="">
                 </div>
 
                 <!-- Mô tả -->
@@ -176,36 +175,59 @@
                 </div>
 
                 <!-- Nút phải -->
-                <button class="deal-btn right"><span>&gt;</span></button>
+                <!-- <button class="deal-btn right"><span>&gt;</span></button> -->
 
-            </div>
-        </div>
-    </section>
-    <section class="news-section">
-        <h2 class="news-title">Tin mới nhất</h2>
-        <p class="news-subtitle">
-            Thêm chút ngọt ngào cho vẻ ngoài kiêu sa với mẫu bông tai yêu thích.
-        </p>
-
-        <div class="news-wrapper">
-
-            <!-- ITEM 1 -->
-            <div class="news-item">
-                <div class="news-img">
-                    <img src="https://cdn3527.cdn-template-4s.com/thumbs/news/blog-7_thumb_720.jpg" alt="">
-                    <button class="arrow-btn left">&#10094;</button>
-                </div>
-
-                <h3 class="news-heading">
-                    Tô điểm cho bản thân với bộ trang sức tuyệt đẹp
-                </h3>
-                <p class="news-desc">
-                    Thời trang vốn dĩ không chỉ là váy áo, mà còn là sự khéo léo kết hợp
-                    của những món phụ kiện khẳng định phong cách của [...]
-                </p>
-                <a href="#" class="news-btn">Xem thêm</a>
             </div>
         </div>
     </section>
 </div>
+@endsection
+@section('style')
+<style>
+    .hottrend-list {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        /* 4 cột */
+        gap: 20px;
+        /* khoảng cách giữa các sản phẩm */
+    }
+
+    .hottrend-item {
+        background: #fff;
+        padding: 10px;
+        border: 1px solid #eee;
+        text-align: center;
+    }
+
+    .suggest-list {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        /* 4 sản phẩm 1 hàng */
+        gap: 20px;
+        /* khoảng cách giữa các sản phẩm */
+    }
+
+    .suggest-item {
+        background: #fff;
+        padding: 10px;
+        border: 1px solid #eee;
+        text-align: center;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+        .suggest-list {
+            grid-template-columns: repeat(2, 1fr);
+            /* 2 sản phẩm 1 hàng trên tablet */
+        }
+    }
+
+    @media (max-width: 640px) {
+        .suggest-list {
+            grid-template-columns: 1fr;
+            /* 1 sản phẩm 1 hàng trên mobile */
+        }
+    }
+</style>
+
 @endsection

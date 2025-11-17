@@ -13,7 +13,7 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="{{ asset('css/home.css') }}">
     <script src="{{ asset('js/cart.js') }}"></script>
@@ -56,7 +56,9 @@
     @include('commnent.header')
 
     <main>
-        @yield(section: 'content')
+        <div class="main-content">
+            @yield(section: 'content')
+        </div>
     </main>
 
     @include('commnent.footer')

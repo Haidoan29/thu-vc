@@ -70,4 +70,40 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 
+document.addEventListener('DOMContentLoaded', function() {
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const categoryList = document.getElementById('categoryList');
 
+    const itemsToShow = 5; // Số danh mục hiển thị cùng lúc
+    const itemWidth = categoryList.querySelector('.product-item').offsetWidth; // width mỗi item
+    const totalItems = categoryList.children.length;
+    let currentIndex = 0;
+
+    function updateButtons() {
+        prevBtn.disabled = currentIndex === 0;
+        nextBtn.disabled = currentIndex >= totalItems - itemsToShow;
+    }
+
+    function updateSlider() {
+        categoryList.style.transform = `translateX(-${currentIndex * itemWidth}px)`;
+        updateButtons();
+    }
+
+    prevBtn.addEventListener('click', function() {
+        if (currentIndex > 0) {
+            currentIndex--;
+            updateSlider();
+        }
+    });
+
+    nextBtn.addEventListener('click', function() {
+        if (currentIndex < totalItems - itemsToShow) {
+            currentIndex++;
+            updateSlider();
+        }
+    });
+
+    // Khởi tạo trạng thái ban đầu
+    updateButtons();
+});

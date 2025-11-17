@@ -22,7 +22,7 @@ class ViewServiceProvider extends ServiceProvider
     {
         // Gửi $categories tới mọi view
         View::composer('*', function ($view) {
-            $view->with('categories', Category::all());
+            $view->with('menuCategories', Category::all());
         });
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Cart;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use MongoDB\BSON\ObjectId;
 
 class CartController extends Controller
 {
@@ -60,7 +61,6 @@ class CartController extends Controller
 
             $productIds = array_keys($cartItems);
             $products = Product::whereIn('_id', $productIds)->get()->keyBy('_id');
-
             foreach ($cartItems as $productId => $quantity) {
                 if (isset($products[$productId])) {
                     $product = $products[$productId];
@@ -70,7 +70,7 @@ class CartController extends Controller
                     $items[] = [
                         'id' => $product->_id,
                         'name' => $product->name,
-                        'image' => $product->image,
+                        'image' => $product->images,
                         'price' => $product->price,
                         'quantity' => $quantity,
                         'subtotal' => $subtotal,
@@ -78,8 +78,7 @@ class CartController extends Controller
                 }
             }
         }
-
-
+        // dd($items);
         return view('user.cart.index', [
             'items' => $items,
             'totalAmount' => $totalAmount,
@@ -161,4 +160,20 @@ class CartController extends Controller
 
         return response()->json(['status' => 'success']);
     }
+    public function checkoutSession(Request $request)
+{
+    $items = $request->input('items', []);
+    foreach ($items as $item) {
+        $product = Product::find($item['id']); // không dùng ObjectId nếu MySQL
+        if ($product) {
+            $product->stock = max(0, $product->stock - $item['quantity']);
+            dd($product);
+            $product->save();
+        }
+    }
+
+    session(['checkout_items' => $items]);
+    return response()->json(['status' => 'success']);
+}
+
 }

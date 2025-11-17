@@ -8,27 +8,38 @@ use Illuminate\Support\Str;
 
 class CategoryController extends Controller
 {
-    public function index() {
-        $categories = Category::all();
-        return view('admin.categories.index', compact('categories'));
+    public function index(Request $request)
+    {
+        $perPage = $request->input('perPage', 10);
+
+        $categories = Category::query()
+            ->when($request->search, fn($q) => $q->where('name', 'like', '%' . $request->search . '%'))
+            ->paginate($perPage); // paginate() trả về LengthAwarePaginator
+
+        return view('admin.categories.index', compact('categories', 'perPage'));
     }
 
-    public function create() {
+
+
+
+    public function create()
+    {
         $categories = Category::all(); // dùng cho select parent_id
         return view('admin.categories.create', compact('categories'));
     }
 
-    public function store(Request $request){
+    public function store(Request $request)
+    {
         $request->validate([
-            'name'=>'required|string',
-            'description'=>'nullable|string',
-            'parent_id'=>'nullable|string',
-            'image'=>'nullable|image|max:2048'
+            'name' => 'required|string',
+            'description' => 'nullable|string',
+            'parent_id' => 'nullable|string',
+            'image' => 'nullable|image|max:2048'
         ]);
 
         $imageUrl = null;
 
-        if($request->hasFile('image')){
+        if ($request->hasFile('image')) {
             $file = $request->file('image');
             $filename = uniqid() . '.' . $file->getClientOriginalExtension();
             $file->move(public_path('categories'), $filename);
@@ -43,25 +54,27 @@ class CategoryController extends Controller
             'image' => $imageUrl
         ]);
 
-        return redirect()->route('admin.categories.index')->with('success','Category created successfully.');
+        return redirect()->route('admin.categories.index')->with('success', 'Category created successfully.');
     }
 
-    public function edit($id){
+    public function edit($id)
+    {
         $category = Category::find($id);
-        if(!$category) return redirect()->back()->with('error','Category not found');
-        $categories = Category::where('_id','!=',$id)->get(); // không chọn chính nó làm parent
-        return view('admin.categories.edit', compact('category','categories'));
+        if (!$category) return redirect()->back()->with('error', 'Category not found');
+        $categories = Category::where('_id', '!=', $id)->get(); // không chọn chính nó làm parent
+        return view('admin.categories.edit', compact('category', 'categories'));
     }
 
-    public function update(Request $request, $id){
+    public function update(Request $request, $id)
+    {
         $category = Category::find($id);
-        if(!$category) return redirect()->back()->with('error','Category not found');
+        if (!$category) return redirect()->back()->with('error', 'Category not found');
 
         $request->validate([
-            'name'=>'required|string',
-            'description'=>'nullable|string',
-            'parent_id'=>'nullable|string',
-            'image'=>'nullable|image|max:2048'
+            'name' => 'required|string',
+            'description' => 'nullable|string',
+            'parent_id' => 'nullable|string',
+            'image' => 'nullable|image|max:2048'
         ]);
 
         $data = [
@@ -71,7 +84,7 @@ class CategoryController extends Controller
             'parent_id' => $request->parent_id
         ];
 
-        if($request->hasFile('image')){
+        if ($request->hasFile('image')) {
             $file = $request->file('image');
             $filename = uniqid() . '.' . $file->getClientOriginalExtension();
             $file->move(public_path('categories'), $filename);
@@ -80,12 +93,13 @@ class CategoryController extends Controller
 
         $category->update($data);
 
-        return redirect()->route('admin.categories.index')->with('success','Category updated successfully.');
+        return redirect()->route('admin.categories.index')->with('success', 'Category updated successfully.');
     }
 
-    public function destroy($id){
+    public function destroy($id)
+    {
         $category = Category::find($id);
-        if($category) $category->delete();
-        return redirect()->route('admin.categories.index')->with('success','Category deleted successfully.');
+        if ($category) $category->delete();
+        return redirect()->route('admin.categories.index')->with('success', 'Category deleted successfully.');
     }
 }

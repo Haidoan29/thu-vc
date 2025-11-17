@@ -23,11 +23,12 @@
         <!-- Select + Image + Name -->
         <div class="col-span-5 flex gap-3">
             <input type="checkbox" class="select-item" data-id="{{ $item['id'] }}" data-subtotal="{{ $item['subtotal'] }}">
-            <img src="{{ $item['image'] }}" class="w-20 h-20 object-cover border rounded">
+            <img src="{{ $item['image'][0] ?? asset('images/default.png') }}" class="w-20 h-20 object-cover border rounded">
             <div>
                 <p class="text-sm font-medium">{{ $item['name'] }}</p>
             </div>
         </div>
+
 
         <!-- Đơn giá -->
         <div class="col-span-2 text-center text-gray-600">

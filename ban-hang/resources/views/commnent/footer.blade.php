@@ -4,11 +4,11 @@
             <!-- Cột 1 - Thông tin liên hệ -->
             <div class="footer-col">
                 <h3>Thông tin liên hệ</h3>
-                <p><strong>CÔNG TY TNHH PHẦN MỀM NHÂN HÒA</strong></p>
+                <p><strong>CÔNG TY TNHH PHẦN MỀM ABC</strong></p>
 
-                <p>Địa chỉ: Tầng 4, Tòa nhà số 97 - 99 Láng Hạ, Đống Đa, Hà Nội (Tòa nhà Petrowaco)</p>
+                <p>Địa chỉ: </p>
                 <p>Điện thoại: 1900 6680 - 0901191616</p>
-                <p>Email: contact@sm4s.vn</p>
+                <p>Email: abc@gmail.com</p>
 
                 <div class="social-icons">
                     <a href="#"><i class="fab fa-facebook-f"></i></a>
@@ -24,10 +24,7 @@
                 <h3>Liên kết</h3>
                 <ul>
                     <li><a href="#">Trang chủ</a></li>
-                    <li><a href="#">Giới thiệu</a></li>
                     <li><a href="#">Sản phẩm</a></li>
-                    <li><a href="#">Tin tức</a></li>
-                    <li><a href="#">Thư viện</a></li>
                     <li><a href="#">Liên hệ</a></li>
                 </ul>
             </div>
@@ -55,6 +52,5 @@
                     <button type="submit">Đăng ký</button>
                 </form>
             </div>
-
         </div>
     </footer>

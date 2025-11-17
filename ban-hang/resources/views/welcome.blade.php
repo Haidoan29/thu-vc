@@ -5,9 +5,7 @@
 
 {{-- Nếu người dùng là admin thì show nội dung admin --}}
 @if(session('user_role') === 'admin')
-    @include('admin.products.index') {{-- đường dẫn view admin --}}
+  return redirect()->route('admin.products.index');
 @else
-    <p>Chào mừng người dùng bình thường!</p>
-@endif
 
 @endsection

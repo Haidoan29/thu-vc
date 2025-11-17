@@ -72,10 +72,10 @@
 
                     <li><a href="/" class="text-decoration-none text-dark">Trang chủ</a></li>
                     <li class="nav-item dropdown position-relative">
-                        <a class="nav-link dropdown-toggle" href="/san-pham">Sản phẩm</a>
+                        <a class="nav-link dropdown-toggle" href="">Sản phẩm</a>
 
                         <ul class="dropdown-menu shadow">
-                            @foreach($categories as $c)
+                            @foreach($menuCategories as $c)
                             <li>
                                 <a class="dropdown-item" href="{{ route('category.products', $c->_id) }}">
                                     {{ $c->name }}
@@ -99,12 +99,13 @@
                     </a>
                     <ul class="dropdown-menu p-3" aria-labelledby="searchMenu" style="min-width: 280px; ;">
                         <li>
-                            <div class="input-group">
-                                <input type="text" class="form-control rounded-pill border-radius: 50px" placeholder="Tìm kiếm..." id="search-input">
-                                <button class="btn btn-primary rounded-pill ms-2" id="search-btn">
+                            <form action="{{ route('products.search') }}" method="GET" class="d-flex align-items-center">
+                                <input type="text" name="q" class="form-control rounded-pill me-2" placeholder="Tìm kiếm..." value="{{ request('q') }}">
+                                <button type="submit" class="btn btn-primary rounded-pill">
                                     <i class="fa-solid fa-magnifying-glass"></i>
                                 </button>
-                            </div>
+                            </form>
+
                         </li>
                     </ul>
                 </div>
@@ -116,7 +117,9 @@
                         Xin chào, {{ Session::get('user_name') }}
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
-                        <li><a class="dropdown-item" href="/dashboard">Dashboard</a></li>
+                        <li><a class="dropdown-item" href="{{ route('orders.myOrders') }}">Đơn hàng</a></li>
+                        <!-- <li><a class="dropdown-item" href="{{ route('profile.index') }}">Tài khoản của tôi</a></li> -->
+
                         <li>
                             <form action="/admin/logout" method="POST">
                                 @csrf
@@ -136,25 +139,19 @@
                     <span class="position-absolute top-0 start-100 translate-middle badge bg-danger" id="cart-count">0</span>
                 </a>
 
-                <!-- MINI CART POPUP -->
+
                 <div id="mini-cart" class="mini-cart-box shadow-lg">
                     <div id="mini-cart-content" class="p-4 text-center">
                         <img src="https://cdn-icons-png.flaticon.com/512/2038/2038854.png" width="80">
                         <p class="mt-3">Chưa Có Sản Phẩm</p>
                     </div>
                 </div>
-                <a href="#" class="icon-btn position-relative">
-                    <i class="fa-regular fa-heart"></i>
-                    <span class="position-absolute top-0 start-100 translate-middle badge bg-danger">0</span>
-                </a>
-                <!-- Mobile Toggle -->
                 <i class="fa-solid fa-bars icon-btn d-lg-none" id="btn-open-menu"></i>
             </div>
 
         </div>
     </div>
 </header>
-
 @section('style')
 <style>
     /* MINI CART BOX */
@@ -230,16 +227,4 @@
         font-weight: bold;
     }
 </style>
-@endsection
-@section('script')
-<script>
-    document.getElementById('search-btn').addEventListener('click', function() {
-        let query = document.getElementById('search-input').value.trim();
-        if(query !== '') {
-            // Chuyển hướng đến trang tìm kiếm, ví dụ /search?q=...
-            window.location.href = '/search?q=' + encodeURIComponent(query);
-        }
-    });
-</script>
-
 @endsection

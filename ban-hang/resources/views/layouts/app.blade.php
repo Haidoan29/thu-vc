@@ -10,6 +10,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <title>@yield('title')</title>
     <script src="//unpkg.com/alpinejs" defer></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <style>
+        .small.text-muted{
+            display: none
+        }
+    </style>
+
 
 </head>
 
@@ -20,30 +27,35 @@
         <!-- SIDEBAR -->
         <aside class="w-64 h-screen bg-white border-r px-6 py-5 fixed left-0 top-0">
             <h2 class="text-2xl font-bold mb-10 flex items-center">
-                <span class="text-green-600 mr-2">D</span> Dasher
+                Dasher
             </h2>
 
             <ul>
                 <li class="mb-4">
-                    <a href="{{ route('admin.categories.index')}}" class="flex items-center gap-3 text-gray-600 hover:text-green-600">
-                        Danh mục
-                    </a>
-                </li>
-
-                <li class="mb-4">
-                    <a href="{{ route('admin.products.index') }}" class="flex items-center gap-3 text-gray-600 hover:text-green-600">
+                    <a href="{{ route('admin.products.index') }}"
+                        class="flex items-center gap-3 {{ request()->routeIs('admin.products.*') ? 'text-green-600' : 'text-gray-600' }} hover:text-green-600">
                         Sản phẩm
                     </a>
                 </li>
 
                 <li class="mb-4">
-                    <a href="{{ route('order.index') }}" class="flex items-center gap-3 text-green-600 font-semibold">
+                    <a href="{{ route('admin.categories.index')}}"
+                        class="flex items-center gap-3 {{ request()->routeIs('admin.categories.*') ? 'text-green-600' : 'text-gray-600' }} hover:text-green-600">
+                        Danh mục
+                    </a>
+                </li>
+
+                <li class="mb-4">
+                    <a href="{{ route('order.index') }}"
+                        class="flex items-center gap-3 {{ request()->routeIs('order.*') ? 'text-green-600' : 'text-gray-600' }} hover:text-green-600">
                         Đơn hàng
                     </a>
                 </li>
+
                 <li class="mb-4">
-                    <a href="{{ route('admin.users.index') }}" class="flex items-center gap-3 text-green-600 font-semibold">
-                        user
+                    <a href="{{ route('admin.users.index') }}"
+                        class="flex items-center gap-3 {{ request()->routeIs('admin.users.*') ? 'text-green-600' : 'text-gray-600' }} hover:text-green-600">
+                        User
                     </a>
                 </li>
             </ul>
@@ -57,13 +69,9 @@
             </div>
         </aside>
 
-        <!-- MAIN CONTENT WRAPPER -->
         <div class="ml-64 flex-1">
-
-            <!-- NAVBAR DÙNG CHUNG -->
-            <!-- NAVBAR DÙNG CHUNG -->
             <nav class="w-full flex justify-end items-center px-6 py-4 bg-white border-b sticky top-0 z-20">
-                
+
                 <button class="relative mr-6">
                     <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs px-1 rounded-full">2</span>
                     🔔
@@ -86,7 +94,7 @@
                             <form action="{{ route('admin.logout') }}" method="POST">
                                 @csrf
                                 <button type="submit"
-                                        class="w-full bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600">
+                                    class="w-full bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600">
                                     Logout
                                 </button>
                             </form>
@@ -94,7 +102,7 @@
                     </div>
                 </div>
 
-            </nav> 
+            </nav>
 
 
             <!-- NỘI DUNG PAGE -->

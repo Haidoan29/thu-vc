@@ -17,18 +17,6 @@
     </div>
 
     <div class="mb-3">
-        <label>Parent</label>
-        <select name="parent_id" class="form-control">
-            <option value="">-- Không có --</option>
-            @foreach($categories as $cat)
-                <option value="{{ $cat->_id ?? $cat->id }}" {{ old('parent_id') == ($cat->_id ?? $cat->id) ? 'selected' : '' }}>
-                    {{ $cat->name }}
-                </option>
-            @endforeach
-        </select>
-    </div>
-
-    <div class="mb-3">
         <label>Ảnh</label>
         <input type="file" name="image" class="form-control">
     </div>

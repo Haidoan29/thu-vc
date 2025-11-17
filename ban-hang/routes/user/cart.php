@@ -22,4 +22,7 @@ Route::get('/cart/count', function () {
 });
 Route::get('/cart/items', [CartController::class, 'getItems']);
 Route::post('/cart/update-quantity', [CartController::class, 'updateQuantity']);
+// web.php
+Route::post('/cart/checkout-session', [CartController::class, 'checkoutSession'])->name('cart.checkout-session');
+
 

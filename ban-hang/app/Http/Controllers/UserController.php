@@ -8,10 +8,20 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::all();
-        return view('admin.users.index', compact('users'));
+        $perPage = $request->input('perPage', 10); // số item mỗi trang
+
+        $users = User::query()
+            ->when($request->search, function ($query, $search) {
+                $query->where('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%");
+            })
+            ->orderBy('created_at', 'desc')
+            ->paginate($perPage);
+
+        return view('admin.users.index', compact('users', 'perPage'));
     }
 
     public function create()
@@ -19,7 +29,7 @@ class UserController extends Controller
         return view('admin.users.create');
     }
 
-   public function store(Request $request)
+    public function store(Request $request)
     {
         $data = $request->validate([
             'name' => 'required|string',
@@ -51,7 +61,7 @@ class UserController extends Controller
 
         $data = $request->validate([
             'name' => 'required|string',
-            'email' => 'required|email|unique:users,email,'.$id,
+            'email' => 'required|email|unique:users,email,' . $id,
             'role' => 'required|string',
             'phone' => 'nullable|string',
             'address' => 'nullable|string',
@@ -67,5 +77,9 @@ class UserController extends Controller
         $user = User::find($id);
         if ($user) $user->delete();
         return redirect()->route('admin.users.index')->with('success', 'User deleted successfully.');
+    }
+    public function profile()
+    {
+        return view('user.profile.index');
     }
 }

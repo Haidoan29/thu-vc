@@ -10,5 +10,5 @@ Route::post('/cart/checkout-session', [CheckoutController::class, 'storeSession'
 Route::get('/checkout', [CheckoutController::class, 'index']);
 
 // Xử lý đặt hàng
-Route::post('/checkout', [CheckoutController::class, 'placeOrder']);
+Route::post('/checkout', [CheckoutController::class, 'placeOrder']) -> name('checkout.store');
 

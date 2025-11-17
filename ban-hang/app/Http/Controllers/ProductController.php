@@ -7,14 +7,27 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use MongoDB\BSON\ObjectId;
 
 class ProductController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $products = Product::all();
-        return view('admin.products.index', compact('products'));
+        $query = Product::query();
+
+        // Tìm kiếm theo tên
+        if ($request->has('search') && $request->search != '') {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        // Số lượng phân trang
+        $perPage = $request->input('perPage', 15); // Mặc định 15
+        $products = $query->paginate($perPage);
+        // dd($query->get());
+        return view('admin.products.index', compact('products', 'perPage'));
     }
+
+
 
     public function create()
     {
@@ -38,8 +51,9 @@ class ProductController extends Controller
 
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $img) {
-                $path = $img->store('products', 'public');
-                $imageUrls[] = url(Storage::url($path));
+                $fileName = uniqid() . '.' . $img->getClientOriginalExtension();
+                $img->move(public_path('products'), $fileName);
+                $imageUrls[] = url('products/' . $fileName);
             }
         }
 
@@ -51,8 +65,11 @@ class ProductController extends Controller
             'stock'       => $request->stock ?? 0,
             'status'      => $request->status ?? 'active',
             'images'      => $imageUrls,
-            'category_id' => $request->category_id // thêm dòng này
+            'category_id' => $request->category_id
         ]);
+
+
+
 
 
         return redirect()->route('admin.products.index')->with('success', 'Product created');
@@ -83,12 +100,30 @@ class ProductController extends Controller
             'images.*'    => 'nullable|image|max:2048'
         ]);
 
-        $newImages = $product->images ?? [];
+        $imageUrls = $product->images ?? [];
 
+        // Nếu có ảnh mới — xoá toàn bộ ảnh cũ
         if ($request->hasFile('images')) {
+
+            // XÓA ẢNH CŨ
+            foreach ($product->images as $oldUrl) {
+
+                // Tách file name từ URL
+                $fileName = basename($oldUrl);
+
+                // Xóa file trong public/products
+                $oldPath = public_path('products/' . $fileName);
+                if (file_exists($oldPath)) {
+                    unlink($oldPath);
+                }
+            }
+
+            // Lưu ảnh mới
+            $imageUrls = [];
             foreach ($request->file('images') as $img) {
-                $path = $img->store('products', 'public');
-                $newImages[] = url(Storage::url($path));
+                $fileName = uniqid() . '.' . $img->getClientOriginalExtension();
+                $img->move(public_path('products'), $fileName);
+                $imageUrls[] = url('products/' . $fileName);
             }
         }
 
@@ -99,11 +134,13 @@ class ProductController extends Controller
             'description' => $request->description,
             'stock'       => $request->stock,
             'status'      => $request->status,
-            'images'      => $newImages
+            'images'      => $imageUrls,
         ]);
 
         return redirect()->route('admin.products.index')->with('success', 'Product updated');
     }
+
+
 
     public function destroy($id)
     {
@@ -118,6 +155,55 @@ class ProductController extends Controller
         $products = Product::where('category_id', $id)->get(); // giả sử bạn có field category_id
         $category = Category::find($id);
 
-        return view('user.products.category', compact('products', 'category' ));
+        return view('user.products.category', compact('products', 'category'));
     }
+
+    public function checkExist($id)
+    {
+        try {
+            $product = Product::find(new ObjectId($id));
+        } catch (\Exception $e) {
+            return response()->json([
+                'exists' => false
+            ]);
+        }
+
+        return response()->json([
+            'exists' => $product && $product->stock > 0 && $product->status === 'active'
+        ]);
+    }
+
+public function search(Request $request)
+{
+    $query = $request->input('q', '');
+
+    $products = collect();
+
+    if ($query !== '') {
+        $rawProducts = Product::where('name', 'like', "%{$query}%")
+            ->orWhere('description', 'like', "%{$query}%")
+            ->get();
+
+        // Decode images cho từng sản phẩm
+        $products = $rawProducts->map(function ($product) {
+            $images = $product->images;
+
+            if (is_string($images)) {
+                // Nếu là string JSON, decode
+                $images = json_decode($images, true);
+            } elseif (!is_array($images)) {
+                // Nếu không phải string hay array, mặc định mảng rỗng
+                $images = [];
+            }
+
+            $product->images = $images ?? [];
+            return $product;
+        });
+    }
+
+    return view('user.products.search', compact('products', 'query'));
 }
+
+
+}
+    

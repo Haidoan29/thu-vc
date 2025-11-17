@@ -32,7 +32,7 @@
         <option value="inactive">Ngừng bán</option>
     </select>
 
-    <label>Ảnh sản phẩm (chọn nhiều)</label>
+    <label>Ảnh sản phẩm</label>
     <input type="file" name="images[]" multiple class="form-control">
 
     <button class="btn btn-success mt-3">Thêm sản phẩm</button>
