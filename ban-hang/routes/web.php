@@ -4,6 +4,7 @@ use App\Http\Controllers\AddressController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\ContactRequestController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Middleware\AdminAuth;
@@ -29,6 +30,7 @@ Route::post('logout', [AuthController::class, 'logout'])->name('admin.logout');
 Route::get('/search', [ProductController::class, 'search'])->name('products.search');
 Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('user.register');
 Route::post('/register', [AuthController::class, 'register'])->name('user.register.post');
+Route::resource('contact_requests', ContactRequestController::class);
 
 // routes/web.php
 Route::get('/api/districts/{province_code}', [CheckoutController::class, 'getDistricts']);

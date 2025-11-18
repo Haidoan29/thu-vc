@@ -53,26 +53,42 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
 
         {{-- FORM --}}
-        <form class="space-y-5">
+        <form action="{{ route('contact_requests.store') }}" method="POST" class="space-y-5">
+            @csrf
 
-            <input type="text" placeholder="Họ và tên"
-                class="w-full border border-gray-300 px-4 py-3 focus:outline-none">
+            <input type="text" name="full_name" placeholder="Họ và tên"
+                class="w-full border border-gray-300 px-4 py-3 focus:outline-none"
+                value="{{ old('full_name') }}">
+            @error('full_name')
+            <p class="text-red-500 text-sm">{{ $message }}</p>
+            @enderror
 
-            <input type="text" placeholder="Số điện thoại"
-                class="w-full border border-gray-300 px-4 py-3 focus:outline-none">
+            <input type="text" name="phone" placeholder="Số điện thoại"
+                class="w-full border border-gray-300 px-4 py-3 focus:outline-none"
+                value="{{ old('phone') }}">
+            @error('phone')
+            <p class="text-red-500 text-sm">{{ $message }}</p>
+            @enderror
 
-            <input type="email" placeholder="Email"
-                class="w-full border border-gray-300 px-4 py-3 focus:outline-none">
+            <input type="email" name="email" placeholder="Email"
+                class="w-full border border-gray-300 px-4 py-3 focus:outline-none"
+                value="{{ old('email') }}">
+            @error('email')
+            <p class="text-red-500 text-sm">{{ $message }}</p>
+            @enderror
 
-            <textarea rows="6" placeholder="Nội dung"
-                class="w-full border border-gray-300 px-4 py-3 focus:outline-none"></textarea>
+            <textarea name="message" rows="6" placeholder="Nội dung"
+                class="w-full border border-gray-300 px-4 py-3 focus:outline-none">{{ old('message') }}</textarea>
+            @error('message')
+            <p class="text-red-500 text-sm">{{ $message }}</p>
+            @enderror
 
             <button type="submit"
                 class="px-8 py-3 bg-[#687244] text-white hover:bg-[#566036] transition">
                 Gửi yêu cầu
             </button>
-
         </form>
+
 
         {{-- GOOGLE MAP --}}
         <iframe class="w-full h-[400px] rounded"
@@ -85,3 +101,4 @@
 </section>
 
 @endsection
+
