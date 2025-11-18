@@ -11,17 +11,37 @@ class OrderController extends Controller
     public function index(Request $request)
     {
         $perPage = $request->input('perPage', 10);
-
+        $search  = $request->input('search');
         $orders = Order::with('user')
-            ->when($request->search, function ($q, $search) {
-                $q->whereHas('user', function ($qu) use ($search) {
-                    $qu->where('name', 'like', "%{$search}%")
-                        ->orWhere('email', 'like', "%{$search}%")
-                        ->orWhere('phone', 'like', "%{$search}%");
+            ->when($search, function ($q) use ($search) {
+                $q->where(function ($query) use ($search) {
+
+                    // 1️⃣ Tìm theo user.name
+                    // $query->whereHas('user', function ($u) use ($search) {
+                    //     $u->where('name', 'like', "%{$search}%");
+                    // });
+
+                    // 2️⃣ Tìm theo phone (trong bảng orders)
+                    $query->orWhere('phone', 'like', "%{$search}%");
+
+                    // 3️⃣ Tìm theo địa chỉ
+                    $query->orWhere('shipping_address', 'like', "%{$search}%");
+
+                    // 4️⃣ Tìm theo trạng thái đơn hàng
+                    $query->orWhere('status', 'like', "%{$search}%");
+
+                    // 5️⃣ Tìm theo payment method
+                    $query->orWhere('payment_method', 'like', "%{$search}%");
+
+                    // 6️⃣ Tìm theo tổng tiền
+                    if (is_numeric($search)) {
+                        $query->orWhere('total_amount', $search);
+                    }
                 });
             })
             ->orderBy('_id', 'desc')
-            ->paginate($perPage);
+            ->paginate($perPage)
+            ->appends($request->all()); // giữ lại search + perPage khi phân trang
 
         return view('admin.order.index', compact('orders', 'perPage'));
     }

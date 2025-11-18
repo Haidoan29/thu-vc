@@ -129,7 +129,7 @@
                     </ul>
                 </div>
                 @else
-                <a href="/admin/login" class="icon-btn">
+                <a href="{{ route('user.login') }}" class="icon-btn">
                     <i class="fa-regular fa-user"></i>
                 </a>
                 @endif

@@ -173,37 +173,35 @@ class ProductController extends Controller
         ]);
     }
 
-public function search(Request $request)
-{
-    $query = $request->input('q', '');
+    public function search(Request $request)
+    {
+        $query = $request->input('q', '');
+        $perPage = 9; // 9 sản phẩm / trang
 
-    $products = collect();
+        $products = Product::query();
 
-    if ($query !== '') {
-        $rawProducts = Product::where('name', 'like', "%{$query}%")
-            ->orWhere('description', 'like', "%{$query}%")
-            ->get();
+        if ($query !== '') {
+            $products = $products->where('name', 'like', "%{$query}%")
+                ->orWhere('description', 'like', "%{$query}%");
+        }
 
-        // Decode images cho từng sản phẩm
-        $products = $rawProducts->map(function ($product) {
+        // paginate và giữ query string để phân trang
+        $products = $products->paginate($perPage)->withQueryString();
+
+        // decode ảnh cho từng sản phẩm
+        $products->getCollection()->transform(function ($product) {
             $images = $product->images;
 
             if (is_string($images)) {
-                // Nếu là string JSON, decode
                 $images = json_decode($images, true);
             } elseif (!is_array($images)) {
-                // Nếu không phải string hay array, mặc định mảng rỗng
                 $images = [];
             }
 
             $product->images = $images ?? [];
             return $product;
         });
+
+        return view('user.products.search', compact('products', 'query'));
     }
-
-    return view('user.products.search', compact('products', 'query'));
 }
-
-
-}
-    

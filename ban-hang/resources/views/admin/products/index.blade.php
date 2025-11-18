@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+@section('title','Quản lý sản phẩm')
 @section('content')
 <h2 class="text-2xl mb-4">Danh sách sản phẩm</h2>
 

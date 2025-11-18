@@ -22,10 +22,14 @@ Route::get('/lien-he', function () {
 })->name('news');
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('admin/login', [AuthController::class, 'showLoginForm'])->name('admin.login');
-Route::post('admin/login', [AuthController::class, 'login'])->name('admin.login');
-Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
-Route::post('admin/logout', [AuthController::class, 'logout'])->name('admin.logout');
+Route::get('login', [AuthController::class, 'userLogin'])->name('user.login');
+Route::post('/login', [AuthController::class, 'login'])->name('admin.login');
+Route::get('admin/login', [AuthController::class, 'showLoginForm'])->name('login');
+Route::post('logout', [AuthController::class, 'logout'])->name('admin.logout');
 Route::get('/search', [ProductController::class, 'search'])->name('products.search');
+Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('user.register');
+Route::post('/register', [AuthController::class, 'register'])->name('user.register.post');
+
 // routes/web.php
 Route::get('/api/districts/{province_code}', [CheckoutController::class, 'getDistricts']);
 Route::get('/api/wards/{district_code}', [CheckoutController::class, 'getWards']);
@@ -68,4 +72,3 @@ Route::middleware([UserAuth::class])->prefix('dashboard')->group(function () {
 // routes/api.php
 Route::get('/districts/{province_code}', [CheckoutController::class, 'getDistricts']);
 Route::get('/wards/{district_code}', [CheckoutController::class, 'getWards']);
-
