@@ -6,10 +6,9 @@
     <h2 class="text-2xl mb-4">Danh sách đơn hàng</h2>
 
     <div class="d-flex justify-content-between mb-3">
-        <!-- Form tìm kiếm + chọn số lượng phân trang -->
         <form action="{{ route('order.index') }}" method="GET" class="d-flex align-items-center">
             <input type="text" name="search" value="{{ request('search') }}" class="form-control me-2" placeholder="Tìm kiếm người đặt...">
-             <button class="btn btn-outline-success" type="submit">Tìm</button>
+            <button class="btn btn-outline-success" type="submit">Tìm</button>
             <select name="perPage" class="form-select ms-2" onchange="this.form.submit()">
                 @foreach([5, 10, 15, 20] as $size)
                 <option value="{{ $size }}" {{ request('perPage', 10) == $size ? 'selected' : '' }}>
@@ -17,7 +16,7 @@
                 </option>
                 @endforeach
             </select>
-           
+
         </form>
     </div>
 
@@ -91,4 +90,7 @@
                 @endforelse
             </tbody>
         </table>
-        @endsection
+    </div>
+</div>
+
+@endsection

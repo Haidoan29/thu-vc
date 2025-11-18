@@ -67,7 +67,6 @@ header {
     min-height: 70vh;
     width: 100%;
     background-image: url("https://thoitrang08.themeweb4s.com/templates/noithat06/assets/media/slider/slide_image_1.webp");
-    /* ← đặt ảnh nền full section */
     background-size: cover;
     background-position: center right;
     background-repeat: no-repeat;
@@ -78,8 +77,6 @@ header {
 .hero-overlay {
     width: 100%;
     height: 100%;
-    background: rgba(255, 255, 255, 0.4);
-    /* hơi sáng giống mẫu */
     display: flex;
     align-items: center;
 }
