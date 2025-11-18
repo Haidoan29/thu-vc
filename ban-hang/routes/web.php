@@ -34,7 +34,9 @@ Route::post('/register', [AuthController::class, 'register'])->name('user.regist
 Route::get('/api/districts/{province_code}', [CheckoutController::class, 'getDistricts']);
 Route::get('/api/wards/{district_code}', [CheckoutController::class, 'getWards']);
 
-
+// Momo payment routes
+Route::get('/momo/return', [CheckoutController::class, 'momoReturn'])->name('momo.return');
+Route::post('/momo/notify', [CheckoutController::class, 'momoNotify'])->name('momo.notify');
 
 require __DIR__ . '/user/product.php';
 require __DIR__ . '/user/cart.php';

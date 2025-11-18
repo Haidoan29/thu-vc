@@ -45,6 +45,21 @@
             @endforeach
         </div>
         <p class="font-bold text-right mb-4">Tổng tiền: {{ number_format($totalAmount) }}đ</p>
+
+        <div class="mb-3">
+            <label>Phương thức thanh toán</label>
+            <div class="space-y-2">
+                <label class="flex items-center">
+                    <input type="radio" name="payment_method" value="COD" checked class="mr-2">
+                    Thanh toán khi nhận hàng (COD)
+                </label>
+                <label class="flex items-center">
+                    <input type="radio" name="payment_method" value="MOMO" class="mr-2">
+                    Thanh toán qua Momo
+                </label>
+            </div>
+        </div>
+
         <button type="submit" class="bg-orange-600 text-white px-6 py-2 rounded w-full">Đặt hàng</button>
     </form>
 </div>

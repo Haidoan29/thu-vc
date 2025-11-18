@@ -9,5 +9,6 @@ Route::prefix('products')->name('products.')->group(function () {
     Route::get('/{id}', [HomeController::class, 'ProductsDetail'])->name('detail');
     Route::get('/check/{id}', [ProductController::class, 'checkExist'])
         ->name('products.check');
+    Route::get('/', [ProductController::class, 'getAllProduct'])->name('getall');
 });
 Route::get('/category/{id}', [ProductController::class, 'showByCategory'])->name('category.products');

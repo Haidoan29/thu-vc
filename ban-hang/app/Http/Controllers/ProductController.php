@@ -140,8 +140,6 @@ class ProductController extends Controller
         return redirect()->route('admin.products.index')->with('success', 'Product updated');
     }
 
-
-
     public function destroy($id)
     {
         $product = Product::find($id);
@@ -156,6 +154,10 @@ class ProductController extends Controller
         $category = Category::find($id);
 
         return view('user.products.category', compact('products', 'category'));
+    }
+    public function getAllProduct(){
+        $products = Product::all();
+        return view('user.products.index', compact('products'));
     }
 
     public function checkExist($id)

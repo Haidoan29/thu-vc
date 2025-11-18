@@ -72,7 +72,7 @@
 
                     <li><a href="/" class="text-decoration-none text-dark">Trang chủ</a></li>
                     <li class="nav-item dropdown position-relative">
-                        <a class="nav-link dropdown-toggle" href="">Sản phẩm</a>
+                        <a class="nav-link dropdown-toggle" href="{{ route('products.getall') }}">Sản phẩm</a>
 
                         <ul class="dropdown-menu shadow">
                             @foreach($menuCategories as $c)
@@ -118,10 +118,10 @@
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
                         <li><a class="dropdown-item" href="{{ route('orders.myOrders') }}">Đơn hàng</a></li>
-                        <!-- <li><a class="dropdown-item" href="{{ route('profile.index') }}">Tài khoản của tôi</a></li> -->
+                        <li><a class="dropdown-item" href="{{ route('profile.index') }}">Tài khoản của tôi</a></li>
 
                         <li>
-                            <form action="/admin/logout" method="POST">
+                            <form action="/logout" method="POST">
                                 @csrf
                                 <button class="dropdown-item" type="submit">Đăng xuất</button>
                             </form>

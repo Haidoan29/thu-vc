@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Session;
 
 class UserController extends Controller
 {
@@ -80,6 +81,45 @@ class UserController extends Controller
     }
     public function profile()
     {
-        return view('user.profile.index');
+        $userId = Session::get('user_id'); // lấy id user từ session
+        $user = User::find($userId);
+        return view('user.profile.index', compact('user'));
+    }
+    public function updateAccount(Request $request)
+    {
+        $userId = Session::get('user_id');
+        $user = User::find($userId);
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email',
+            'password' => 'nullable|string|min:6',
+            'phone' => 'nullable|string|max:20',
+            'address' => 'nullable|string|max:255',
+        ]);
+
+        // Kiểm tra email trùng
+        $exists = User::where('email', $request->email)
+            ->where('_id', '!=', $userId)
+            ->first();
+        if ($exists) {
+            return back()->with('error', 'Email này đã được sử dụng bởi người khác!');
+        }
+
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->phone = $request->phone;
+        $user->address = $request->address;
+
+        if ($request->password) {
+            $user->password = $request->password; 
+        }
+
+        $user->save();
+
+        // CẬP NHẬT SESSION TÊN MỚI
+        Session::put('user_name', $user->name);
+
+        return back()->with('success', 'Cập nhật thông tin thành công!');
     }
 }
