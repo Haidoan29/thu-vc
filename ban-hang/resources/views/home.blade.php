@@ -28,11 +28,10 @@
         <p class="section-sub">
             Khám phá bộ sưu tập trang sức mới nhất với thiết kế sang trọng và độc nhất của chúng tôi!
         </p>
-
         <div class="collection-grid">
             @foreach($products as $index => $p)
             <div class="collection-card">
-                @if($index == 1) {{-- Card 2: ảnh dưới --}}
+                @if($index == 1) 
                 <div class="card-content">
                     <h3>{{ $p->name }}</h3>
                     <p>{{ $p->description }}</p>
@@ -41,7 +40,7 @@
                 @if(!empty($p->images) && count($p->images) > 0)
                 <img src="{{ $p->images[0] }}" alt="{{ $p->name }}">
                 @endif
-                @else {{-- Card 1 & 3: ảnh trên --}}
+                @else 
                 @if(!empty($p->images) && count($p->images) > 0)
                 <img src="{{ $p->images[0] }}" alt="{{ $p->name }}">
                 @endif
@@ -54,19 +53,15 @@
             </div>
             @endforeach
         </div>
-
     </section>
     <section class="product-section my-8">
         <h2 class="product-title text-3xl font-bold mb-2">Sản phẩm</h2>
         <p class="product-sub text-gray-600 mb-6">Khám phá dịch vụ thiết kế riêng miễn phí của Jewelry nhé!</p>
 
         <div class="relative flex items-center">
-            <!-- Nút trái -->
             <button id="prevBtn" class="arrow left bg-gray-200 p-3 rounded-full shadow hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200">
                 &#8249;
             </button>
-
-            <!-- Danh sách slider -->
             <div class="overflow-hidden flex-1 mx-4">
                 <div id="categoryList" class="flex transition-transform duration-300">
                     @foreach($categories as $category)
@@ -79,20 +74,17 @@
                     @endforeach
                 </div>
             </div>
-
-            <!-- Nút phải -->
             <button id="nextBtn" class="arrow right bg-gray-200 p-3 rounded-full shadow hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200">
                 &#8250;
             </button>
         </div>
     </section>
-    <section class="hottrend">
+    <section class="hottrend">  
         <h2 class="hottrend-title">Hot trend</h2>
         <p class="hottrend-sub">Xu hướng trang sức sẽ lên ngôi trong năm 2025. Cùng Jewelry cập nhật xu hướng hot nhất</p>
-
         <div class="hottrend-list">
             @foreach($latestProducts as $product)
-            <div class="hottrend-item">
+            <a href="{{ route('products.detail', ['id' => $product->id]) }}" class="hottrend-item block">
                 <div class="img-box">
                     @if(!empty($product->images))
                     <img src="{{ $product->images[0] }}" width="150" alt="{{ $product->name }}">
@@ -109,10 +101,11 @@
                     <span class="old">{{ number_format($product->old_price) }} VND</span>
                     @endif
                 </div>
-            </div>
+            </a>
             @endforeach
         </div>
     </section>
+
 
     <section class="suggest">
         <h2 class="suggest-title">Gợi ý riêng cho bạn</h2>
@@ -123,7 +116,7 @@
 
         <div class="suggest-list">
             @foreach($getproducts as $p)
-            <div class="suggest-item">
+            <a href="{{ route('products.detail', ['id' => $p->id]) }}" class="suggest-item block">
                 <div class="img-box">
                     <img src="{{ $p->images[0] ?? 'http://via.placeholder.com/150' }}" alt="{{ $p->name }}" style="width:100%;">
                 </div>
@@ -131,11 +124,10 @@
                 <div class="price">
                     <span class="new">{{ number_format($p->price) }} VND</span>
                 </div>
-            </div>
+            </a>
             @endforeach
         </div>
     </section>
-
     <section class="dealhot mb-5">
         <div class="dealhot-container">
 
