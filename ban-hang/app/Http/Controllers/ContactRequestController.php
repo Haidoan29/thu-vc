@@ -11,7 +11,7 @@ class ContactRequestController extends Controller
     public function index()
     {
         $contacts = ContactRequest::latest()->paginate(10);
-        return view('contact_requests.index', compact('contacts'));
+        return view('admin.contact_requests.index', compact('contacts'));
     }
 
     // Hiển thị form tạo contact request mới
@@ -76,5 +76,13 @@ class ContactRequestController extends Controller
 
         return redirect()->route('contact_requests.index')
             ->with('success', 'Xóa thành công!');
+    }
+    public function markAsContacted($id)
+    {
+        $contact = ContactRequest::findOrFail($id);
+        $contact->status = 'đã liên hệ';
+        $contact->save();
+
+        return redirect()->back()->with('success', 'Cập nhật trạng thái thành công!');
     }
 }

@@ -58,6 +58,12 @@
                         User
                     </a>
                 </li>
+                   <li class="mb-4">
+                    <a href="{{ route('admin.contact.index') }}"
+                        class="flex items-center gap-3 {{ request()->routeIs('admin.contact.*') ? 'text-green-600' : 'text-gray-600' }} hover:text-green-600">
+                        Liên hệ
+                    </a>
+                </li>
             </ul>
 
             <div class="absolute bottom-10 left-6 flex items-center gap-3">
