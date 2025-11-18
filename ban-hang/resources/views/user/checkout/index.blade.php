@@ -18,20 +18,19 @@
 
         <div class="mb-3">
             <label>Tỉnh/Thành phố</label>
-            <select id="province" class="w-full border px-2 py-1 rounded" required></select>
+            <select id="province" class="w-full border px-2 py-1 rounded" name="province" required></select>
         </div>
         <div class="mb-3">
             <label>Quận/Huyện</label>
-            <select id="district" class="w-full border px-2 py-1 rounded" required></select>
+            <select id="district" class="w-full border px-2 py-1 rounded" name="district" required></select>
         </div>
         <div class="mb-3">
             <label>Phường/Xã</label>
-            <select id="ward" class="w-full border px-2 py-1 rounded" required></select>
+            <select id="ward" class="w-full border px-2 py-1 rounded" name="ward" required></select>
         </div>
-
         <div class="mb-3">
             <label>Số nhà, tên đường</label>
-            <input type="text" id="street" class="w-full border px-2 py-1 rounded" placeholder="Ví dụ: 12 Nguyễn Lân" required>
+            <input type="text" id="street" name="street" class="w-full border px-2 py-1 rounded" placeholder="Ví dụ: 12 Nguyễn Lân" required>
         </div>
 
         <input type="hidden" name="address" id="fullAddress">
@@ -57,29 +56,26 @@
         const wardSelect = document.getElementById('ward');
         const streetInput = document.getElementById('street');
         const fullAddressInput = document.getElementById('fullAddress');
-        const form = document.querySelector('form');
 
-        // Hàm build full address và log
+        // ❗ SỬA LỖI QUAN TRỌNG: form selector sai
+        const form = document.querySelector('form[action="{{ route('checkout.store') }}"]');
+
+        // Hàm cập nhật địa chỉ đầy đủ
         function updateFullAddress() {
-            console.log('--- Debug address ---');
-            console.log('Street:', streetInput.value);
-            console.log('Ward value:', wardSelect.value);
-            console.log('District text:', districtSelect.options[districtSelect.selectedIndex]?.text);
-            console.log('Province text:', provinceSelect.options[provinceSelect.selectedIndex]?.text);
+            const street = streetInput.value.trim();
+            const ward = wardSelect.options[wardSelect.selectedIndex]?.text || '';
+            const district = districtSelect.options[districtSelect.selectedIndex]?.text || '';
+            const province = provinceSelect.options[provinceSelect.selectedIndex]?.text || '';
 
-            const parts = [
-                streetInput.value.trim(),
-                wardSelect.value,
-                districtSelect.options[districtSelect.selectedIndex]?.text || '',
-                provinceSelect.options[provinceSelect.selectedIndex]?.text || '',
-                'Việt Nam'
-            ].filter(Boolean);
+            const full = [street, ward, district, province, "Việt Nam"]
+                .filter(Boolean)
+                .join(', ');
 
-            fullAddressInput.value = parts.join(', ');
-            console.log('Full address input value:', fullAddressInput.value);
+            fullAddressInput.value = full;
+            console.log("Updated full address:", full);
         }
 
-        // 1️⃣ Load provinces
+        // Load provinces
         fetch('https://provinces.open-api.vn/api/p/')
             .then(res => res.json())
             .then(provinces => {
@@ -90,105 +86,58 @@
                     opt.textContent = p.name;
                     provinceSelect.appendChild(opt);
                 });
-                console.log('Provinces loaded:', provinces.map(p => p.name));
             });
 
-        // 2️⃣ Load districts khi chọn tỉnh
+        // Load districts
         provinceSelect.addEventListener('change', function() {
             const provinceCode = this.value;
-            console.log('Province selected:', provinceCode);
-
             districtSelect.innerHTML = '<option>Đang tải...</option>';
             wardSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
-
-            if (!provinceCode) {
-                districtSelect.innerHTML = '<option value="">Chọn Quận/Huyện</option>';
-                return;
-            }
 
             fetch(`/api/districts/${provinceCode}`)
                 .then(res => res.json())
                 .then(data => {
-                    console.log('Districts data:', data);
                     districtSelect.innerHTML = '<option value="">Chọn Quận/Huyện</option>';
-                    if (data.districts) {
-                        data.districts.forEach(d => {
-                            const opt = document.createElement('option');
-                            opt.value = d.code;
-                            opt.textContent = d.name;
-                            districtSelect.appendChild(opt);
-                        });
-                    }
-                })
-                .catch(err => {
-                    console.error('Error loading districts:', err);
-                    districtSelect.innerHTML = '<option value="">Không tải được quận/huyện</option>';
+                    data.districts?.forEach(d => {
+                        const opt = document.createElement('option');
+                        opt.value = d.code;
+                        opt.textContent = d.name;
+                        districtSelect.appendChild(opt);
+                    });
                 });
         });
 
-        // 3️⃣ Load wards khi chọn quận
+        // Load wards
         districtSelect.addEventListener('change', function() {
             const districtCode = this.value;
-            console.log('District selected:', districtCode);
-
             wardSelect.innerHTML = '<option>Đang tải...</option>';
-
-            if (!districtCode) {
-                wardSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
-                return;
-            }
 
             fetch(`/api/wards/${districtCode}`)
                 .then(res => res.json())
                 .then(data => {
-                    console.log('Wards data:', data);
                     wardSelect.innerHTML = '<option value="">Chọn Phường/Xã</option>';
-                    if (data.wards) {
-                        data.wards.forEach(w => {
-                            const opt = document.createElement('option');
-                            opt.value = w.name;
-                            opt.textContent = w.name;
-                            wardSelect.appendChild(opt);
-                        });
-                    }
-                })
-                .catch(err => {
-                    console.error('Error loading wards:', err);
-                    wardSelect.innerHTML = '<option value="">Không tải được phường/xã</option>';
+                    data.wards?.forEach(w => {
+                        const opt = document.createElement('option');
+                        opt.value = w.name;    // ward value = name
+                        opt.textContent = w.name;
+                        wardSelect.appendChild(opt);
+                    });
                 });
         });
 
-        // 4️⃣ Cập nhật fullAddress trước submit
-        form.addEventListener('submit', function(e) {
-            // Cập nhật fullAddress trước khi submit
-            const street = streetInput.value.trim();
-            const ward = wardSelect.options[wardSelect.selectedIndex]?.text || '';
-            const district = districtSelect.options[districtSelect.selectedIndex]?.text || '';
-            const province = provinceSelect.options[provinceSelect.selectedIndex]?.text || '';
+        // ❗ Tự động cập nhật address khi thay đổi phần nào
+        streetInput.addEventListener("input", updateFullAddress);
+        provinceSelect.addEventListener("change", updateFullAddress);
+        districtSelect.addEventListener("change", updateFullAddress);
+        wardSelect.addEventListener("change", updateFullAddress);
 
-            const full = [street, ward, district, province, 'Việt Nam'].filter(Boolean).join(', ');
-
-            fullAddressInput.value = full;
-
-            console.log('Submitting form...');
-            console.log('Street:', street);
-            console.log('Ward:', ward);
-            console.log('District:', district);
-            console.log('Province:', province);
-            console.log('FullAddress input value:', fullAddressInput.value);
-
-            // Chỉ submit nếu street + ward + district + province đều có
-            if (!street || !ward || !district || !province) {
-                alert('Vui lòng điền đầy đủ địa chỉ!');
-                e.preventDefault();
-                return;
-            }
-
-            // Bỏ preventDefault và submit form bình thường
-            // Không dùng this.submit() vì dễ gây vòng lặp
+        // Cập nhật trước khi submit
+        form.addEventListener('submit', function() {
+            console.log("SUBMIT → generating address...");
+            updateFullAddress();
         });
-
     });
 </script>
+
 
 @endsection

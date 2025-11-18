@@ -69,6 +69,3 @@ Route::middleware([UserAuth::class])->prefix('dashboard')->group(function () {
 Route::get('/districts/{province_code}', [CheckoutController::class, 'getDistricts']);
 Route::get('/wards/{district_code}', [CheckoutController::class, 'getWards']);
 
-
-Route::get('/api/districts/{provinceCode}', [AddressController::class, 'getDistricts']);
-Route::get('/api/wards/{districtCode}', [AddressController::class, 'getWards']);

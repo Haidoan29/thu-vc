@@ -41,7 +41,7 @@ class CheckoutController extends Controller
     // Đặt hàng
     public function placeOrder(Request $request)
     {
-        dd($request->all());
+        // dd($request->all());
         $request->validate([
             'name' => 'required',
             'phone' => 'required',
