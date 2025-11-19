@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+@section('title', 'Mã giảm giá')
 @section('content')
 <div class="container mx-auto p-4">
     <h2 class="text-xl font-bold mb-4">Danh sách Mã Giảm Giá</h2>

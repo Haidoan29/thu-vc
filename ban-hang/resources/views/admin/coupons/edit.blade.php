@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+@section('title', 'Chỉnh sửa mã giảm giá')
 @section('content')
 <div class="container mx-auto p-4 max-w-lg">
     <h2 class="text-xl font-bold mb-4">Chỉnh sửa Mã Giảm Giá</h2>

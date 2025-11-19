@@ -8,6 +8,7 @@ use App\Http\Controllers\ContactRequestController;
 use App\Http\Controllers\CouponController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\UserCouponController;
 use App\Http\Middleware\AdminAuth;
 use App\Http\Middleware\UserAuth;
 use App\Models\Product;
@@ -38,6 +39,11 @@ Route::get('/api/wards/{district_code}', [CheckoutController::class, 'getWards']
 Route::get('/momo/return', [CheckoutController::class, 'momoReturn'])->name('momo.return');
 Route::post('/momo/notify', [CheckoutController::class, 'momoNotify'])->name('momo.notify');
 Route::post('/cart/apply-coupon', [CouponController::class, 'applyCoupon']);
+// Route::middleware('auth')->group(function () {
+// });
+Route::get('/my-coupons', [UserCouponController::class, 'index'])->name('user.coupons');
+
+Route::post('/coupons/{coupon}/claim', [UserCouponController::class, 'claim'])->name('user.coupons.claim');
 
 require __DIR__ . '/user/product.php';
 require __DIR__ . '/user/cart.php';
@@ -46,6 +52,7 @@ require __DIR__ . '/user/order.php';
 require __DIR__ . '/user/profile.php';
 require __DIR__ . '/user/reviews.php';
 require __DIR__ . '/user/wishlist.php';
+require __DIR__ . '/user/coupons.php';
 Route::prefix('admin')->middleware('admin.auth')->group(function () {
     require __DIR__ . '/admin/user.php';
     require __DIR__ . '/admin/order.php';
@@ -69,7 +76,7 @@ Route::middleware([UserAuth::class])->prefix('dashboard')->group(function () {
 Route::get('/districts/{province_code}', [CheckoutController::class, 'getDistricts']);
 Route::get('/wards/{district_code}', [CheckoutController::class, 'getWards']);
 
-Route::get('/db-test', function() {
+Route::get('/db-test', function () {
     try {
         DB::connection()->getPdo();
         return 'DB Connected';

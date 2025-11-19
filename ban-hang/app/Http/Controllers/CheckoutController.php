@@ -7,6 +7,7 @@ use App\Models\Cart;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Payment;
+use App\Models\UserCoupon;
 use Illuminate\Support\Facades\Http;
 
 class CheckoutController extends Controller
@@ -36,7 +37,14 @@ class CheckoutController extends Controller
         });
 
         $totalAmount = $items->sum('subtotal');
-        return view('user.checkout.index', compact('items', 'totalAmount'));
+
+        // Lấy các mã mà user đã claim
+        $userCoupons = UserCoupon::where('user_id', session('user_id'))
+            ->where('used', false)
+            ->with('coupon')
+            ->get();
+
+        return view('user.checkout.index', compact('items', 'totalAmount', 'userCoupons'));
     }
 
     // Đặt hàng
@@ -70,7 +78,31 @@ class CheckoutController extends Controller
             ];
         });
 
-        $totalAmount = $items->sum('subtotal');
+        $totalAmount = $request->input('final_total', 0);
+        $discountAmount = $request->input('discount_amount', 0);
+
+        $userCoupon = null;
+        $coupon = null;
+
+        if ($request->coupon_id) {
+            $userCoupon = UserCoupon::where('_id', $request->coupon_id)
+                ->where('user_id', session('user_id'))
+                ->where('used', false)
+                ->first();
+
+            if (!$userCoupon || !$userCoupon->coupon || !$userCoupon->coupon->isValid()) {
+                return back()->with('error', 'Mã giảm giá không hợp lệ hoặc đã hết lượt sử dụng!');
+            }
+
+            $coupon = $userCoupon->coupon;
+            // Recalculate discount just in case tampered
+            if ($coupon->discount_type === 'percent') {
+                $discountAmount = floor($totalAmount * $coupon->discount_value / 100);
+            } else {
+                $discountAmount = $coupon->discount_value;
+            }
+            $totalAmount = max(0, $totalAmount - $discountAmount);
+        }
 
         $order = Order::create([
             'user_id' => session('user_id'),
@@ -78,9 +110,21 @@ class CheckoutController extends Controller
             'shipping_address' => $request->address,
             'phone' => $request->phone,
             'total_amount' => $totalAmount,
+            'discount_amount' => $discountAmount,
+            'coupon_id' => $request->coupon_id,
             'payment_method' => $request->payment_method,
             'status' => 'pending'
         ]);
+
+        // ✅ Update coupon usage
+        if ($userCoupon && $coupon) {
+            $userCoupon->used = true;
+            $userCoupon->used_at = now();
+            $userCoupon->save();
+
+            $coupon->used_count = ($coupon->used_count ?? 0) + 1;
+            $coupon->save();
+        }
 
         if ($request->payment_method === 'MOMO') {
             $momoService = new \App\Services\MomoService();
@@ -101,8 +145,8 @@ class CheckoutController extends Controller
             }
         }
 
-        // Nếu COD $cart = Cart::where('user_id', session('user_id'))->first();
-       $cart = Cart::where('user_id', session('user_id'))->first();
+        // Xóa sản phẩm khỏi giỏ hàng
+        $cart = Cart::where('user_id', session('user_id'))->first();
         if ($cart) {
             $orderedIds = collect($checkoutItems)->pluck('id')->toArray();
             $cartItems = is_string($cart->items) ? json_decode($cart->items, true) : $cart->items;
@@ -112,11 +156,12 @@ class CheckoutController extends Controller
             $cart->items = $cartItems;
             $cart->save();
         }
-        session()->forget('checkout_items'); // xóa session
+
+        session()->forget('checkout_items');
         session()->save();
+
         return redirect('/')->with('success', 'Đặt hàng thành công!');
     }
-
 
     // Xử lý callback từ Momo
     public function momoReturn(Request $request)
