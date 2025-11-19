@@ -192,4 +192,48 @@ class CartController extends Controller
         session(['checkout_items' => $items]);
         return response()->json(['status' => 'success']);
     }
+    public function remove(Request $request)
+    {
+        $userId = session('user_id');
+        if (!$userId) {
+            return response()->json(['status' => 'error', 'message' => 'Chưa đăng nhập']);
+        }
+
+        $productId = $request->product_id;
+
+        $cart = Cart::where('user_id', $userId)->first();
+        if ($cart && isset($cart->items[$productId])) {
+            $items = $cart->items;
+            unset($items[$productId]);
+            $cart->items = $items;
+            $cart->save();
+
+            return response()->json(['status' => 'success', 'cart_count' => array_sum($items)]);
+        }
+
+        return response()->json(['status' => 'error', 'message' => 'Sản phẩm không tồn tại']);
+    }
+    public function removeMultiple(Request $request)
+    {
+        $userId = session('user_id');
+        if (!$userId) {
+            return response()->json(['status' => 'error', 'message' => 'Chưa đăng nhập']);
+        }
+
+        $productIds = $request->product_ids ?? [];
+        $cart = Cart::where('user_id', $userId)->first();
+
+        if ($cart && $productIds) {
+            $items = $cart->items;
+            foreach ($productIds as $id) {
+                unset($items[$id]);
+            }
+            $cart->items = $items;
+            $cart->save();
+
+            return response()->json(['status' => 'success', 'cart_count' => array_sum($items)]);
+        }
+
+        return response()->json(['status' => 'error', 'message' => 'Không có sản phẩm để xóa']);
+    }
 }

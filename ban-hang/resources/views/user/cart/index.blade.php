@@ -62,7 +62,7 @@
     <div class="flex justify-between items-center py-4">
         <div class="flex items-center gap-4">
             <input type="checkbox" id="select-all-footer"> Chọn tất cả (<span id="selected-count">0</span>)
-            <button class="text-red-500">Xóa</button>
+            <button class="text-red-500" id="btn-remove-selected">Xóa</button>
         </div>
 
         <div class="flex items-center gap-4">
@@ -242,6 +242,102 @@
         // Khởi tạo tổng tiền ban đầu
         updateTotal();
 
+    });
+
+    // Hàm hiển thị thông báo
+    function showMessage(msg) {
+        const div = document.createElement('div');
+        div.textContent = msg;
+        div.className = 'fixed top-5 right-5 bg-green-500 text-white px-4 py-2 rounded shadow-lg z-50';
+        document.body.appendChild(div);
+        setTimeout(() => div.remove(), 2000); // 2 giây tự ẩn
+    }
+
+    // Hàm kiểm tra giỏ hàng trống
+    function checkCartEmpty() {
+        const productRows = document.querySelectorAll('.product-row');
+        if (productRows.length === 0) {
+            document.querySelector('.max-w-6xl').innerHTML = '<p class="text-center py-4">Giỏ hàng trống</p>';
+            const cartCountEl = document.getElementById('cart-count');
+            if (cartCountEl) cartCountEl.textContent = 0;
+        }
+    }
+
+    // Xóa 1 sản phẩm
+    document.querySelectorAll('.btn-remove').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const row = this.closest('.product-row');
+            const productId = row.querySelector('.select-item').dataset.id;
+
+            fetch('/cart/remove', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        product_id: productId
+                    })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        row.remove();
+                        updateTotal();
+                        checkCartEmpty();
+
+                        // Cập nhật cart-count header
+                        const cartCountEl = document.getElementById('cart-count');
+                        if (cartCountEl) cartCountEl.textContent = data.cart_count;
+
+                        // Thông báo
+                        showMessage('Xóa sản phẩm thành công!');
+                    } else {
+                        alert(data.message || 'Xóa thất bại');
+                    }
+                });
+        });
+    });
+
+    // Xóa nhiều sản phẩm
+    const removeSelectedBtn = document.getElementById('btn-remove-selected');
+    removeSelectedBtn.addEventListener('click', function() {
+        const selectedCheckboxes = Array.from(document.querySelectorAll('.select-item'))
+            .filter(cb => cb.checked);
+
+        if (selectedCheckboxes.length === 0) {
+            alert('Vui lòng chọn ít nhất 1 sản phẩm!');
+            return;
+        }
+
+        const productIds = selectedCheckboxes.map(cb => cb.dataset.id);
+
+        fetch('/cart/remove-multiple', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    product_ids: productIds
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    selectedCheckboxes.forEach(cb => cb.closest('.product-row').remove());
+                    updateTotal();
+                    checkCartEmpty();
+
+                    // Cập nhật cart-count header
+                    const cartCountEl = document.getElementById('cart-count');
+                    if (cartCountEl) cartCountEl.textContent = data.cart_count;
+
+                    showMessage('Xóa các sản phẩm đã chọn thành công!');
+                } else {
+                    alert(data.message || 'Xóa thất bại');
+                }
+            });
     });
 </script>
 @endsection

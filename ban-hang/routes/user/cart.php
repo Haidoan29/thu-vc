@@ -24,5 +24,8 @@ Route::get('/cart/items', [CartController::class, 'getItems']);
 Route::post('/cart/update-quantity', [CartController::class, 'updateQuantity']);
 // web.php
 Route::post('/cart/checkout-session', [CartController::class, 'checkoutSession'])->name('cart.checkout-session');
+Route::post('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
+Route::post('/cart/remove-multiple', [CartController::class, 'removeMultiple'])->name('cart.remove-multiple');
+
 
 
