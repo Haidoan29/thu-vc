@@ -17,6 +17,13 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="{{ asset('css/home.css') }}">
     <script src="{{ asset('js/cart.js') }}"></script>
+    @if(isset($product))
+    <script>
+        const productData = @json($product);
+    </script>
+    @endif
+
+    <script src="{{ asset('js/wishlist.js') }}"></script>
     <style>
         /* Hover dropdown */
         .dropdown:hover .dropdown-menu {

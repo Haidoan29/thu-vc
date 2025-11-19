@@ -5,11 +5,13 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ContactRequestController;
+use App\Http\Controllers\CouponController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Middleware\AdminAuth;
 use App\Http\Middleware\UserAuth;
 use App\Models\Product;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 
 // Route::get('/', function () {
@@ -31,14 +33,11 @@ Route::get('/search', [ProductController::class, 'search'])->name('products.sear
 Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('user.register');
 Route::post('/register', [AuthController::class, 'register'])->name('user.register.post');
 Route::resource('contact_requests', ContactRequestController::class);
-
-// routes/web.php
 Route::get('/api/districts/{province_code}', [CheckoutController::class, 'getDistricts']);
 Route::get('/api/wards/{district_code}', [CheckoutController::class, 'getWards']);
-
-// Momo payment routes
 Route::get('/momo/return', [CheckoutController::class, 'momoReturn'])->name('momo.return');
 Route::post('/momo/notify', [CheckoutController::class, 'momoNotify'])->name('momo.notify');
+Route::post('/cart/apply-coupon', [CouponController::class, 'applyCoupon']);
 
 require __DIR__ . '/user/product.php';
 require __DIR__ . '/user/cart.php';
@@ -46,9 +45,8 @@ require __DIR__ . '/user/checkout-cart.php';
 require __DIR__ . '/user/order.php';
 require __DIR__ . '/user/profile.php';
 require __DIR__ . '/user/reviews.php';
+require __DIR__ . '/user/wishlist.php';
 Route::prefix('admin')->middleware('admin.auth')->group(function () {
-
-
     require __DIR__ . '/admin/user.php';
     require __DIR__ . '/admin/order.php';
     require __DIR__ . '/admin/payment.php';
@@ -56,23 +54,26 @@ Route::prefix('admin')->middleware('admin.auth')->group(function () {
     require __DIR__ . '/admin/product.php';
     require __DIR__ . '/admin/category.php';
     require __DIR__ . '/admin/cart.php';
+    require __DIR__ . '/admin/coupons.php';
 });
-
-
-// Admin route
 Route::middleware([AdminAuth::class])->prefix('admin')->group(function () {
     foreach (glob(__DIR__ . '/admin/*.php') as $filename) {
         require $filename;
     }
 });
-
-// User route
 Route::middleware([UserAuth::class])->prefix('dashboard')->group(function () {
     Route::get('/', function () {
         return view('user.dashboard');
     });
 });
-
-// routes/api.php
 Route::get('/districts/{province_code}', [CheckoutController::class, 'getDistricts']);
 Route::get('/wards/{district_code}', [CheckoutController::class, 'getWards']);
+
+Route::get('/db-test', function() {
+    try {
+        DB::connection()->getPdo();
+        return 'DB Connected';
+    } catch (\Exception $e) {
+        return 'DB Error: ' . $e->getMessage();
+    }
+});

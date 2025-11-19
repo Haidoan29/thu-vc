@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
     const categoryList = document.getElementById('categoryList');
@@ -90,14 +90,14 @@ document.addEventListener('DOMContentLoaded', function() {
         updateButtons();
     }
 
-    prevBtn.addEventListener('click', function() {
+    prevBtn.addEventListener('click', function () {
         if (currentIndex > 0) {
             currentIndex--;
             updateSlider();
         }
     });
 
-    nextBtn.addEventListener('click', function() {
+    nextBtn.addEventListener('click', function () {
         if (currentIndex < totalItems - itemsToShow) {
             currentIndex++;
             updateSlider();
@@ -107,3 +107,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Khởi tạo trạng thái ban đầu
     updateButtons();
 });
+
+
+

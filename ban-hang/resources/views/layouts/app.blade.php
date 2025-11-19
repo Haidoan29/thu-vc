@@ -12,7 +12,7 @@
     <script src="//unpkg.com/alpinejs" defer></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <style>
-        .small.text-muted{
+        .small.text-muted {
             display: none
         }
     </style>
@@ -58,12 +58,20 @@
                         User
                     </a>
                 </li>
-                   <li class="mb-4">
+                <li class="mb-4">
                     <a href="{{ route('admin.contact.index') }}"
                         class="flex items-center gap-3 {{ request()->routeIs('admin.contact.*') ? 'text-green-600' : 'text-gray-600' }} hover:text-green-600">
                         Liên hệ
                     </a>
                 </li>
+                <li class="mb-4">
+                    <a href="{{ route('admin.coupons.index') }}"
+                        class="flex items-center gap-3 {{ request()->routeIs('admin.coupons.*') ? 'text-green-600' : 'text-gray-600' }} hover:text-green-600">
+                        Mã giảm giá
+                    </a>
+                </li>
+
+
             </ul>
 
             <div class="absolute bottom-10 left-6 flex items-center gap-3">

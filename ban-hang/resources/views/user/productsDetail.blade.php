@@ -73,9 +73,12 @@
                 </button>
 
 
-                <button class="w-10 h-10 border rounded flex items-center justify-center">
+                <button id="btn-add-to-wishlist"
+                    data-id="{{ $product->id }}"
+                    class="w-10 h-10 border rounded flex items-center justify-center">
                     <i class="far fa-heart"></i>
                 </button>
+
             </div>
 
             <div class="flex items-center gap-3">
@@ -92,7 +95,6 @@
         <!-- Form đánh giá luôn hiển thị -->
         <div id="review-form-container" class="mt-4 border p-6 rounded bg-gray-50">
             <h3 class="text-xl font-semibold mb-4">Đánh giá sản phẩm</h3>
-
             <form id="review-form" action="{{ route('reviews.store') }}" method="POST">
                 @csrf
                 <input type="hidden" name="product_id" value="{{ $product->id }}">
@@ -180,78 +182,79 @@
         }
     });
 
-  document.addEventListener("DOMContentLoaded", function() {
-    const reviewForm = document.getElementById("review-form");
-    const reviewsList = document.getElementById("reviews-list");
+    document.addEventListener("DOMContentLoaded", function() {
+        const reviewForm = document.getElementById("review-form");
+        const reviewsList = document.getElementById("reviews-list");
 
-    reviewForm.addEventListener("submit", async function(e) {
-        e.preventDefault();
-        const formData = new FormData(this);
+        reviewForm.addEventListener("submit", async function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
 
-        const res = await fetch("{{ route('reviews.store') }}", {
-            method: "POST",
-            body: formData,
-            credentials: "same-origin"
-        });
+            const res = await fetch("{{ route('reviews.store') }}", {
+                method: "POST",
+                body: formData,
+                credentials: "same-origin"
+            });
 
-        const data = await res.json();
+            const data = await res.json();
 
-        if (data.success) {
-            // tạo div mới hiển thị review
-            const div = document.createElement("div");
-            div.className = "border p-3 rounded bg-white review-item";
-            div.innerHTML = `
+            if (data.success) {
+                // tạo div mới hiển thị review
+                const div = document.createElement("div");
+                div.className = "border p-3 rounded bg-white review-item";
+                div.innerHTML = `
               <div class="font-semibold">${data.user_name}</div>
                 <div class="text-yellow-500">${'★'.repeat(data.rating)}${'★'.repeat(data.rating)}</div>
                 <div class="mt-2">${data.comment}</div>
             `;
-            // prepend lên đầu danh sách review
-            reviewsList.prepend(div);
+                // prepend lên đầu danh sách review
+                reviewsList.prepend(div);
 
-            // reset form
-            reviewForm.reset();
-        } else if (data.error === "not_logged_in") {
-            window.location.href = "/login";
-        }
-    });
-});
-
-document.addEventListener("DOMContentLoaded", function() {
-    const addBtn = document.getElementById("btn-add-to-cart");
-    if (!addBtn) return; // tránh lỗi nếu nút không tồn tại
-
-    addBtn.addEventListener("click", async function() {
-        let productId = this.getAttribute("data-id");
-        let quantity = Number(document.getElementById("quantity").value);
-
-        // Kiểm tra tồn kho
-        const checkRes = await fetch(`/products/check/${productId}`);
-        const checkData = await checkRes.json();
-
-        if (!checkData.exists) {
-            alert("Sản phẩm này hiện không còn trong kho!");
-            return;
-        }
-
-        // Thêm vào giỏ hàng
-        const res = await fetch("{{ route('cart.add') }}", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRF-TOKEN": "{{ csrf_token() }}"
-            },
-            body: JSON.stringify({ product_id: productId, quantity: quantity })
+                // reset form
+                reviewForm.reset();
+            } else if (data.error === "not_logged_in") {
+                window.location.href = "/login";
+            }
         });
-
-        const data = await res.json();
-        if (data.success) {
-            document.getElementById("cart-count").innerText = data.cart_count;
-        } else if (data.error === "not_logged_in") {
-            window.location.href = "/login";
-        }
     });
-});
 
+    document.addEventListener("DOMContentLoaded", function() {
+        const addBtn = document.getElementById("btn-add-to-cart");
+        if (!addBtn) return; // tránh lỗi nếu nút không tồn tại
 
+        addBtn.addEventListener("click", async function() {
+            let productId = this.getAttribute("data-id");
+            let quantity = Number(document.getElementById("quantity").value);
+
+            // Kiểm tra tồn kho
+            const checkRes = await fetch(`/products/check/${productId}`);
+            const checkData = await checkRes.json();
+
+            if (!checkData.exists) {
+                alert("Sản phẩm này hiện không còn trong kho!");
+                return;
+            }
+
+            // Thêm vào giỏ hàng
+            const res = await fetch("{{ route('cart.add') }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                },
+                body: JSON.stringify({
+                    product_id: productId,
+                    quantity: quantity
+                })
+            });
+
+            const data = await res.json();
+            if (data.success) {
+                document.getElementById("cart-count").innerText = data.cart_count;
+            } else if (data.error === "not_logged_in") {
+                window.location.href = "/login";
+            }
+        });
+    });
 </script>
 @endsection

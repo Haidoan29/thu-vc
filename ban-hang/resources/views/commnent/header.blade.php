@@ -133,22 +133,32 @@
                     <i class="fa-regular fa-user"></i>
                 </a>
                 @endif
+                <i class="fa-solid fa-bars icon-btn d-lg-none" id="btn-open-menu"></i>
+                <a href="javascript:void(0)" id="wishlist-icon" class="icon-btn position-relative">
+                    <i class="fa-regular fa-heart"></i>
+                    <span class="badge bg-danger position-absolute top-0 start-100 translate-middle" id="wishlist-count">
+                        {{ $count ?? 0 }}
 
+                    </span>
+                </a>
+
+                <div id="mini-wishlist" class="mini-cart-box shadow-lg">
+                    <div id="mini-wishlist-content" class="p-4 text-center">
+                        <img src="https://cdn-icons-png.flaticon.com/512/4076/4076500.png" width="80">
+                        <p class="mt-3">Danh sách yêu thích trống</p>
+                    </div>
+                </div>
                 <a href="javascript:void(0)" id="cart-icon" class="icon-btn position-relative">
                     <i class="fa-solid fa-bag-shopping"></i>
                     <span class="position-absolute top-0 start-100 translate-middle badge bg-danger" id="cart-count">0</span>
                 </a>
-
-
                 <div id="mini-cart" class="mini-cart-box shadow-lg">
                     <div id="mini-cart-content" class="p-4 text-center">
                         <img src="https://cdn-icons-png.flaticon.com/512/2038/2038854.png" width="80">
                         <p class="mt-3">Chưa Có Sản Phẩm</p>
                     </div>
                 </div>
-                <i class="fa-solid fa-bars icon-btn d-lg-none" id="btn-open-menu"></i>
             </div>
-
         </div>
     </div>
 </header>
@@ -225,6 +235,45 @@
         text-decoration: none;
         border-radius: 6px;
         font-weight: bold;
+    }
+
+    /* MINI WISHLIST BOX */
+    #mini-wishlist {
+        position: absolute;
+        top: 60px;
+        right: 50px;
+        /* Để không đè vào mini-cart */
+        width: 350px;
+        background: #fff;
+        border-radius: 12px;
+        display: none;
+        z-index: 999;
+        border: 1px solid #ddd;
+        animation: fadeIn 0.2s ease-in-out;
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    .wishlist-item {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .wishlist-item img {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 8px;
+        margin-right: 12px;
+    }
+
+    .wishlist-item .remove {
+        margin-left: auto;
+        cursor: pointer;
+        color: red;
+        font-size: 18px;
     }
 </style>
 @endsection

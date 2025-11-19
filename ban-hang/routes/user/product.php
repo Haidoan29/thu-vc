@@ -5,7 +5,7 @@ use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('products')->name('products.')->group(function () {
-    Route::get('', [ProductController::class, 'getAllProduct'])->name('getall'); // /products
+    Route::get('', [ProductController::class, 'getAllProduct'])->name('getall');
 
     Route::get('/{id}', [HomeController::class, 'ProductsDetail'])->name('detail');
     Route::get('/check/{id}', [ProductController::class, 'checkExist'])
