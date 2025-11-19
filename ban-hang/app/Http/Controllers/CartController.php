@@ -42,11 +42,28 @@ class CartController extends Controller
         // Tổng số lượng để hiển thị lên header
         $cartCount = array_sum($items);
 
+        // Lấy thông tin chi tiết sản phẩm để JS render mini-cart
+        $cartItems = [];
+        foreach ($items as $id => $qty) {
+            $product = Product::find($id);
+            if ($product) {
+                $cartItems[] = [
+                    'id' => $product->id,
+                    'name' => $product->name,
+                    'quantity' => $qty,
+                    'price' => $product->price,
+                    'image' => $product->images[0] ?? 'http://via.placeholder.com/60'
+                ];
+            }
+        }
+
         return response()->json([
             'success' => true,
-            'cart_count' => $cartCount
+            'cart_count' => $cartCount,
+            'cart_items' => $cartItems
         ]);
     }
+
 
     public function index()
     {
@@ -161,19 +178,18 @@ class CartController extends Controller
         return response()->json(['status' => 'success']);
     }
     public function checkoutSession(Request $request)
-{
-    $items = $request->input('items', []);
-    foreach ($items as $item) {
-        $product = Product::find($item['id']); // không dùng ObjectId nếu MySQL
-        if ($product) {
-            $product->stock = max(0, $product->stock - $item['quantity']);
-            dd($product);
-            $product->save();
+    {
+        $items = $request->input('items', []);
+        foreach ($items as $item) {
+            $product = Product::find($item['id']); // không dùng ObjectId nếu MySQL
+            if ($product) {
+                $product->stock = max(0, $product->stock - $item['quantity']);
+                dd($product);
+                $product->save();
+            }
         }
+
+        session(['checkout_items' => $items]);
+        return response()->json(['status' => 'success']);
     }
-
-    session(['checkout_items' => $items]);
-    return response()->json(['status' => 'success']);
-}
-
 }

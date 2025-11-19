@@ -39,8 +39,6 @@ Route::get('/api/wards/{district_code}', [CheckoutController::class, 'getWards']
 Route::get('/momo/return', [CheckoutController::class, 'momoReturn'])->name('momo.return');
 Route::post('/momo/notify', [CheckoutController::class, 'momoNotify'])->name('momo.notify');
 Route::post('/cart/apply-coupon', [CouponController::class, 'applyCoupon']);
-// Route::middleware('auth')->group(function () {
-// });
 Route::get('/my-coupons', [UserCouponController::class, 'index'])->name('user.coupons');
 
 Route::post('/coupons/{coupon}/claim', [UserCouponController::class, 'claim'])->name('user.coupons.claim');

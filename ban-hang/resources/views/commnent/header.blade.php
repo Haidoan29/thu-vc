@@ -73,7 +73,6 @@
                     <li><a href="/" class="text-decoration-none text-dark">Trang chủ</a></li>
                     <li class="nav-item dropdown position-relative">
                         <a class="nav-link dropdown-toggle" href="{{ route('products.getall') }}">Sản phẩm</a>
-
                         <ul class="dropdown-menu shadow">
                             @foreach($menuCategories as $c)
                             <li>

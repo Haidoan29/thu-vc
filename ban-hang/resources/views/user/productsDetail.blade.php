@@ -195,11 +195,9 @@
                 body: formData,
                 credentials: "same-origin"
             });
-
             const data = await res.json();
 
             if (data.success) {
-                // tạo div mới hiển thị review
                 const div = document.createElement("div");
                 div.className = "border p-3 rounded bg-white review-item";
                 div.innerHTML = `
@@ -207,7 +205,6 @@
                 <div class="text-yellow-500">${'★'.repeat(data.rating)}${'★'.repeat(data.rating)}</div>
                 <div class="mt-2">${data.comment}</div>
             `;
-                // prepend lên đầu danh sách review
                 reviewsList.prepend(div);
 
                 // reset form
@@ -220,41 +217,73 @@
 
     document.addEventListener("DOMContentLoaded", function() {
         const addBtn = document.getElementById("btn-add-to-cart");
-        if (!addBtn) return; // tránh lỗi nếu nút không tồn tại
+        if (addBtn) {
+            addBtn.addEventListener("click", async function() {
+                let productId = this.getAttribute("data-id");
+                let quantity = Number(document.getElementById("quantity").value);
 
-        addBtn.addEventListener("click", async function() {
-            let productId = this.getAttribute("data-id");
-            let quantity = Number(document.getElementById("quantity").value);
+                // Kiểm tra tồn kho
+                const checkRes = await fetch(`/products/check/${productId}`);
+                const checkData = await checkRes.json();
 
-            // Kiểm tra tồn kho
-            const checkRes = await fetch(`/products/check/${productId}`);
-            const checkData = await checkRes.json();
+                if (!checkData.exists) {
+                    alert("Sản phẩm này hiện không còn trong kho!");
+                    return;
+                }
 
-            if (!checkData.exists) {
-                alert("Sản phẩm này hiện không còn trong kho!");
-                return;
-            }
+                // Thêm vào giỏ hàng
+                const res = await fetch("{{ route('cart.add') }}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                    },
+                    body: JSON.stringify({
+                        product_id: productId,
+                        quantity: quantity
+                    })
+                });
 
-            // Thêm vào giỏ hàng
-            const res = await fetch("{{ route('cart.add') }}", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                },
-                body: JSON.stringify({
-                    product_id: productId,
-                    quantity: quantity
-                })
+                const data = await res.json();
+
+                if (data.success) {
+                    // Cập nhật badge
+                    document.getElementById("cart-count").innerText = data.cart_count;
+
+                    // Cập nhật mini-cart
+                    const miniCartContent = document.getElementById("mini-cart-content");
+                    if (data.cart_items && data.cart_items.length > 0) {
+                        miniCartContent.innerHTML = ""; // xóa nội dung cũ
+                        data.cart_items.forEach(item => {
+                            const div = document.createElement("div");
+                            div.className = "mini-cart-item";
+                            div.innerHTML = `
+                        <img src="${item.image}" alt="${item.name}">
+                        <div>
+                            <p>${item.name}</p>
+                            <p class="price">${item.price.toLocaleString()} VND x ${item.quantity}</p>
+                        </div>
+                    `;
+                            miniCartContent.appendChild(div);
+                        });
+
+                        // Footer xem giỏ hàng
+                        const footer = document.createElement("div");
+                        footer.className = "mini-cart-footer";
+                        footer.innerHTML = `<a href="/cart">Xem giỏ hàng</a>`;
+                        miniCartContent.appendChild(footer);
+                    } else {
+                        miniCartContent.innerHTML = `
+                    <img src="https://cdn-icons-png.flaticon.com/512/2038/2038854.png" width="80">
+                    <p class="mt-3">Chưa Có Sản Phẩm</p>
+                `;
+                    }
+                } else if (data.error === "not_logged_in") {
+                    window.location.href = "/login";
+                }
             });
+        }
 
-            const data = await res.json();
-            if (data.success) {
-                document.getElementById("cart-count").innerText = data.cart_count;
-            } else if (data.error === "not_logged_in") {
-                window.location.href = "/login";
-            }
-        });
     });
 </script>
 @endsection

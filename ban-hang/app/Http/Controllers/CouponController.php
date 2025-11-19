@@ -11,7 +11,6 @@ class CouponController extends Controller
     // List tất cả coupon
     public function index()
     {
-        // MongoDB vẫn dùng orderBy, get() trả Collection
         $coupons = Coupon::orderBy('created_at','desc')->get();
         return view('admin.coupons.index', compact('coupons'));
     }

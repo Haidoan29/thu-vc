@@ -170,7 +170,7 @@ class ProductController extends Controller
             ]);
         }
 
-        return response()->json([
+        return response()->json(data: [
             'exists' => $product && $product->stock > 0 && $product->status === 'active'
         ]);
     }
